@@ -1,31 +1,4 @@
 ﻿Entries:
-- author: Fox
-  changes:
-  - message: Nuclear Operative teams have started sending brazen war declarations
-      to Nanotrasen stations.
-    type: Add
-  id: 465
-  time: '2024-08-08T21:08:52.0000000+00:00'
-  url: https://github.com/DeltaV-Station/Delta-v/pull/1587
-- author: ZweiHawke
-  changes:
-  - message: Added 85 new PDA sprites
-    type: Add
-  id: 466
-  time: '2024-08-12T02:09:06.480432+00:00'
-  url: null
-- author: deltanedas
-  changes:
-  - message: Merged last months changes (except meteors) from upstream, report any
-      issues!
-    type: Add
-  - message: SCREEEEEEEEEEE!!
-    type: Add
-  - message: Signing paper is now predicted.
-    type: Tweak
-  id: 467
-  time: '2024-08-12T02:09:06.480799+00:00'
-  url: null
 - author: Velcroboy
   changes:
   - message: Re-added The Reclaimer....sort of...
@@ -3869,3 +3842,26 @@
   id: 964
   time: '2025-01-30T20:49:14.0000000+00:00'
   url: https://github.com/DeltaV-Station/Delta-v/pull/2818
+- author: kushbreth
+  changes:
+  - message: Added new uniforms for cargo techs)
+    type: Add
+  id: 965
+  time: '2025-01-30T23:52:16.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/2822
+- author: beck-thompson
+  changes:
+  - message: 'Stun bundle: 4 tc for a stun baton and disabler!'
+    type: Add
+  - message: Hostage ops now receive free body bags and stun bundle in their uplink!
+    type: Add
+  id: 966
+  time: '2025-01-31T03:29:52.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/2816
+- author: deltanedas
+  changes:
+  - message: Fixed storage stars being wonky.
+    type: Fix
+  id: 967
+  time: '2025-01-31T05:16:17.0000000+00:00'
+  url: https://github.com/DeltaV-Station/Delta-v/pull/2824
