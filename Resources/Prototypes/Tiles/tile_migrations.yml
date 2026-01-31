@@ -71,15 +71,13 @@
   target: FloorGlass
 
 - type: tileAlias
-  id: FloorChromite
-  target: FloorAstroGrass
-
-- type: tileAlias
   id: FloorDarkBitile
   target: FloorDark
 
 - type: tileAlias
   id: FloorSteelBitile
   target: FloorSteel
+
+
 
 
