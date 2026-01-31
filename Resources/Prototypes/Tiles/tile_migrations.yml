@@ -61,3 +61,25 @@
 - type: tileAlias
   id: FloorPlanetAsphalt
   target: FloorAsphalt
+
+- type: tileAlias
+  id: FloorGlassPlasma
+  target: FloorGlass
+
+- type: tileAlias
+  id: FloorGlassPlasmaReinforced
+  target: FloorGlass
+
+- type: tileAlias
+  id: FloorChromite
+  target: FloorAstroGrass
+
+- type: tileAlias
+  id: FloorDarkBitile
+  target: FloorDark
+
+- type: tileAlias
+  id: FloorSteelBitile
+  target: FloorSteel
+
+
