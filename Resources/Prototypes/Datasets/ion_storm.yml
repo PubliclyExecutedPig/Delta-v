@@ -188,7 +188,6 @@
   - PLANTS
   - PLASMA
   - ROBOTS
-  - SHUTTLES
   - SPACE
   - SUNLIGHT
   - WATER
@@ -209,7 +208,7 @@
   id: IonStormAreas
   values:
   - ALPHA COMPLEX
-  - A HAUNTED PIZZARIA # fnaf
+  - A HAUNTED PIZZERIA # fnaf
   - A RESEARCH LABORATORY NEAR THE SOUTH POLE
   - AN ALTERNATE DIMENSION
   - AN ALTERNATE UNIVERSE
@@ -282,6 +281,7 @@
   - GRAVITY
   - HAPPINESS
   - HONOR
+  - HUBRIS
   - HUMANITY
   - HUMOR
   - IMAGINATION
@@ -299,7 +299,6 @@
   - PAIN
   - PHYSICS
   - POVERTY
-  - PRIDE
   - PROGRESS
   - REALITY
   - REVOLUTION
@@ -343,19 +342,15 @@
   - HEADS OF STAFF
   - JANITORS
   - LAWYERS
-  - LIBRARIANS
+  - ARCHIVISTS # DeltaV - Replace librarians with Curators
   - MEDICAL DOCTORS
   - MIMES
   - MUSICIANS
   - NON-CREW
   - PARAMEDICS
-  - PASSENGERS
-  # DeltaV - Logistics Department - Replace Quartermaster with Logistics Officer
-  - LOGISTICS OFFICERS
-  # End of modified code
-  # DeltaV - Epistemics Department - Replace Research Director with Mystagogue
-  - MYSTAGOGUES
-  # End of modified code
+  - ASSISTANTS # DeltaV - Replace passengers with assistants
+  - LOGISTICS OFFICERS # DeltaV - Replace Quartermaster with Logistics Officer
+  - MYSTAGOGUES   # DeltaV - Replace Research Director with Mystagogue
   - ROBOTICISTS
   - RODENTS
   - SALVAGE SPECIALISTS
@@ -422,7 +417,7 @@
   - CRAVE
   - DESIRE
   - FEAR
-  - HAS
+  - HAVE
   - HUNGER FOR
   - ARE AFRAID OF
   - ARE BUILT FOR
@@ -508,7 +503,7 @@
   - HIT A HOMERUN
   - HONK
   - HOST C&C
-  - IGNORE PASSENGERS
+  - IGNORE ASSISTANTS # DeltaV - Replace passengers with Assistants
   - IGNORE THE CAPTAIN
   - IGNORE THE CLOWN
   - INFORM THE CREW OF EVERYTHING

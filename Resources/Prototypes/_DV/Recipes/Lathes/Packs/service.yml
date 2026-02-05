@@ -1,10 +1,12 @@
 ## Static
 
 - type: latheRecipePack
-  id: ReportingStatic
+  id: ServiceStaticDeltaV
   recipes:
-  - CassetteTape
-  - TapeRecorder
+  - TrashBag
+  - LightReplacer
+  - Skimmer
+  - RadioHandheld
 
 - type: latheRecipePack
   id: ServiceBoardsStaticDeltaV
@@ -17,6 +19,8 @@
   id: Botany
   recipes:
   - PlantBagOfHolding
+  - PlantAnalyzer # Port of Frontier Plant Analyzer
+  - TrashBagOfHolding
 
 - type: latheRecipePack
   id: ServiceBoardsDeltaV

@@ -9,7 +9,7 @@
       stationProto: StandardNanotrasenStation
       components:
         - type: StationEmergencyShuttle
-          emergencyShuttlePath: /Maps/_DV/Shuttles/NTES_Kaeri.yml
+          emergencyShuttlePath: /Maps/_DV/Shuttles/Evac/ntes_kaeri.yml
         - type: StationNameSetup
           mapNameTemplate: '{0} Asterisk Station {1}'
           nameGenerator:
@@ -17,13 +17,12 @@
             prefixCreator: 'DV'
         - type: StationJobs
           availableJobs:
-            AdministrativeAssistant: [ 1, 1 ]
             Captain: [ 1, 1 ]
             StationAi: [ 1, 1 ]
           #service
             HeadOfPersonnel: [ 1, 1 ]
             Bartender: [ 1, 2 ]
-            Botanist: [ 2, 3 ]
+            Botanist: [ 2, 2 ]
             Chef: [ 1, 2 ]
             Clown: [ 1, 1 ]
             Reporter: [ 1, 1 ]

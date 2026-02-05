@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Content.Shared.FixedPoint;
 using Robust.Shared.GameStates;
 using Robust.Shared.Serialization;
 
@@ -8,11 +9,23 @@ namespace Content.Shared.DoAfter;
 [Access(typeof(SharedDoAfterSystem))]
 public sealed partial class DoAfterComponent : Component
 {
-    [DataField("nextId")]
+    /// <summary>
+    /// The id of the next doafter
+    /// </summary>
+    [DataField]
     public ushort NextId;
 
-    [DataField("doAfters")]
+    /// <summary>
+    /// collection of id + doafter
+    /// </summary>
+    [DataField]
     public Dictionary<ushort, DoAfter> DoAfters = new();
+
+    /// <summary>
+    /// Goobstation - Whether to raise <c>DoAfterEndedEvent</c> on the user after it ends.
+    /// </summary>
+    [DataField]
+    public bool RaiseEndedEvent;
 
     // Used by obsolete async do afters
     public readonly Dictionary<ushort, TaskCompletionSource<DoAfterStatus>> AwaitedDoAfters = new();

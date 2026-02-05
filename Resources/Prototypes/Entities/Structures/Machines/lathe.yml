@@ -42,13 +42,36 @@
         type: LatheBoundUserInterface
       enum.ResearchClientUiKey.Key:
         type: ResearchClientBoundUserInterface
+      enum.WiresUiKey.Key: #DeltaV
+        type: WiresBoundUserInterface #DeltaV
   - type: Transform
     anchored: true
   - type: Pullable
   - type: StaticPrice
     price: 800
   - type: ResearchClient
+  - type: AutomationSlots # Goobstation
+    slots:
+    - !type:AutomatedMaterialStorage
+      input: AutomationSlotMaterials
+      output: null
   - type: TechnologyDatabase
+    supportedDisciplines: # DeltaV - don't add it to every map
+    - Industrial
+    - Biochemical
+    - Arsenal
+    - Experimental
+    - CivilianServices
+  # Begin DeltaV additions
+  - type: Wires
+    boardName: wires-board-name-autolathe
+    layoutId: Fabicator
+    alwaysRandomize: true
+  - type: StationAiWhitelist 
+  - type: MaterialStorageMagnetPickup
+    magnetEnabled: True
+    range: 0.30
+  # End DeltaV additions
 
 # a lathe that can be sped up with space lube / slowed down with glue
 - type: entity
@@ -86,11 +109,11 @@
       SpaceGlue: 5 # no change from normal lathe, overheat!!!
 
 - type: entity
+  categories: [ HideSpawnMenu ] # DeltaV - departmental lathes
   id: Autolathe
   parent: BaseLatheLube
   name: autolathe
   description: It produces basic items using metal and glass. Has the ability to process blueprints to print new recipes.
-  suffix: DO NOT MAP # DeltaV - departamental lathes
   components:
   - type: Sprite
     sprite: Structures/Machines/autolathe.rsi
@@ -108,11 +131,12 @@
   - type: Machine
     board: AutolatheMachineCircuitboard
   - type: MaterialStorage
-    whitelist:
+    whitelist: &StandardMaterialWhitelist
       tags:
         - Sheet
         - RawMaterial
         - Ingot
+  - type: OreSiloClient
   - type: Lathe
     idleState: icon
     runningState: building
@@ -127,6 +151,8 @@
     - PartsStatic
     - AtmosStatic
     - CablesStatic
+    - PaperworkStatic
+    - TowelsStatic
     - CargoStatic
     - MaterialsStatic
     - BasicChemistryStatic
@@ -138,7 +164,7 @@
   - type: EmagLatheRecipes
     emagStaticPacks:
     - SecurityAmmoStatic
-    - SecurityWeaponsStatic
+    - SyndicateAmmoStatic
   - type: BlueprintReceiver
     whitelist:
       tags:
@@ -153,6 +179,7 @@
     - blueprint
 
 - type: entity
+  abstract: true # DeltaV - departmental lathes
   id: AutolatheHyperConvection
   parent: [Autolathe, BaseHyperlathe]
   name: hyper convection autolathe
@@ -164,11 +191,11 @@
     board: AutolatheHyperConvectionMachineCircuitboard
 
 - type: entity
+  categories: [ HideSpawnMenu ] # DeltaV - departmental lathes
   id: Protolathe
   parent: BaseLatheLube
   name: protolathe
   description: Converts raw materials into advanced items.
-  suffix: DO NOT MAP # DeltaV - departamental lathes
   components:
   - type: Sprite
     sprite: Structures/Machines/protolathe.rsi
@@ -186,11 +213,8 @@
   - type: Machine
     board: ProtolatheMachineCircuitboard
   - type: MaterialStorage
-    whitelist:
-      tags:
-        - Sheet
-        - RawMaterial
-        - Ingot
+    whitelist: *StandardMaterialWhitelist
+  - type: OreSiloClient
   - type: Lathe
     idleState: icon
     runningState: building
@@ -202,6 +226,7 @@
     dynamicPacks:
     - AdvancedTools
     - ScienceEquipment
+    - ScienceExplosives
     - ScienceClothing
     - PowerCells
     - ScienceWeapons
@@ -212,7 +237,6 @@
     - Janitor
     - Instruments
     - Equipment
-    - FauxTiles
     - Botany # DeltaV
     - Surgery # Shitmed change
   - type: EmagLatheRecipes
@@ -221,9 +245,9 @@
     - SecurityExplosives
     - SecurityEquipment
     - SecurityWeapons
-    - SyringeGuns # DeltaV
 
 - type: entity
+  abstract: true # DeltaV - departmental lathes
   id: ProtolatheHyperConvection
   parent: [Protolathe, BaseHyperlathe]
   name: hyper convection protolathe
@@ -263,7 +287,6 @@
     - CargoBoardsStatic
     - MedicalBoardsStatic
     - EngineeringBoardsStatic
-    - CircuitFloorsStatic
     dynamicPacks:
     - EngineeringBoards
     - CargoBoards
@@ -273,15 +296,13 @@
     - CameraBoards
     - MechBoards
     - ShuttleBoards
+    - EngineeringBoardsGoob #Goob Factorio port
   - type: EmagLatheRecipes
     emagDynamicPacks:
     - SecurityBoards
   - type: MaterialStorage
-    whitelist:
-      tags:
-        - Sheet
-        - RawMaterial
-        - Ingot
+    whitelist: *StandardMaterialWhitelist
+  - type: OreSiloClient
   - type: RequireProjectileTarget
 
 - type: entity
@@ -319,22 +340,39 @@
     - RoboticsStatic
     - BorgModulesStatic
     - BorgLimbsStatic
+    - RoboticsStaticDeltaV # DeltaV
+    - PowerAugments # DeltaV - augments
+    - ToolAugments # DeltaV - augments
+    - BorgDVModulesStatic # DeltaV - modules
+    - BorgModulesStaticShitmed # Shitmed
+    - BorgIdentificationStaticDeltaV # DeltaV - Borg IDs
     dynamicPacks:
     - Robotics
     - BorgModules
     - MechParts
     - MechEquipment
-    - Cybernetics # Shitmed change
+    - RoboticsDeltaV # DeltaV
+    - BorgModulesDeltaV # DeltaV
+    - Surgery # DeltaV - Share Surgery Parts between Epi and Med.
+    - CyberneticsRobotics # DeltaV - Share Surgery Parts between Epi and Med.
+    - PsionicProsthetics # DeltaV
   - type: EmagLatheRecipes # DeltaV
+    emagStaticPacks:
+    - RoboticsEmagStatic
+    # Being DeltaV Additions
+    - EVASuit
     emagDynamicPacks:
     - SecurityCybernetics # having sechud eyes is good for evil people
     - SecurityHardsuits
+    - BorgModulesSecurityDeltaV
+    - SalvageHardsuits
+    - ParamedicHardsuit
+    - EngineeringHardsuits
+    - AdvancedPsionicProsthetics
+    # End DeltaV Additions
   - type: MaterialStorage
-    whitelist:
-      tags:
-      - Sheet
-      - RawMaterial
-      - Ingot
+    whitelist: *StandardMaterialWhitelist
+  - type: OreSiloClient
   - type: GuideHelp
     guides:
     - Robotics
@@ -402,23 +440,53 @@
   - type: Lathe
     idleState: icon
     runningState: icon
+    unlitIdleState: unlit # DeltaV - added animation sprite layers
+    unlitRunningState: unlit-building # DeltaV - added animation sprite layers
     staticPacks:
     - SecurityEquipmentStatic
     - SecurityPracticeStatic
     - SecurityAmmoStatic
     - SecurityWeaponsStatic
+    # Being DeltaV Additions
+    - ReportingStatic
+    - SecurityRubberAmmoStatic
+    - SecurityShotgunDrumsStatic
+    - PrisonerSoftsuits
+    - EVASuit
+    - SimpleToolsStaticDeltaV
+    - BorgModulesSecurityDeltaVStatic
+    # End DeltaV Additions
     dynamicPacks:
+    - SalvageSecurityBoards
+    - SalvageSecurityWeapons
     - SecurityEquipment
     - SecurityBoards
     - SecurityExplosives
     - SecurityAmmo
     - SecurityWeapons
+    - SpecOpsGoogles # DeltaV
+    #- SecurityDisablers # DeltaV - made roundstart
+    - AdvancedPsionicProsthetics # DeltaV
+  - type: EmagLatheRecipes
+    emagStaticPacks:
+    - SyndicateAmmoStatic
   - type: MaterialStorage
+    whitelist: *StandardMaterialWhitelist
+  # End DeltaV Additions
+  - type: BlueprintReceiver
     whitelist:
       tags:
-        - Sheet
-        - RawMaterial
-        - Ingot
+      - BlueprintAutolathe
+      - BlueprintSecurityTechfab
+  - type: ContainerContainer
+    containers:
+      machine_board: !type:Container
+      machine_parts: !type:Container
+      blueprint: !type:Container
+  # End DeltaV Additions
+  - type: OreSiloClient
+  - type: LatheAnnouncing
+    channels: [Security]
 
 - type: entity
   id: AmmoTechFab
@@ -444,18 +512,31 @@
     - type: Lathe
       idleState: icon
       runningState: icon
+      unlitIdleState: unlit # DeltaV - added animation sprite layers
+      unlitRunningState: unlit-building # DeltaV - added animation sprite layers
       staticPacks:
       - SecurityAmmoStatic
-    - type: MaterialStorage
+      - SecurityShotgunDrumsStatic
+    # End DeltaV Additions
+    - type: BlueprintReceiver
       whitelist:
         tags:
-          - Sheet
-          - RawMaterial
-          - Ingot
+        - BlueprintAmmoTechfab
+    - type: ContainerContainer
+      containers:
+        machine_board: !type:Container
+        machine_parts: !type:Container
+        blueprint: !type:Container
+    - type: EmagLatheRecipes
+      emagStaticPacks:
+      - SyndicateAmmoStatic
+    - type: MaterialStorage
+      whitelist: *StandardMaterialWhitelist
+    - type: OreSiloClient
 
 - type: entity
   id: MedicalTechFab
-  parent: BaseLatheLube
+  parent: BaseTechFabDepartmental # DeltaV - make sure it inherits the emag recipes
   name: medical techfab
   description: Prints equipment for use by the medbay.
   components:
@@ -475,6 +556,8 @@
   - type: Lathe
     idleState: icon
     runningState: icon
+    unlitIdleState: unlit # DeltaV - added animation sprite layers
+    unlitRunningState: unlit-building # DeltaV - added animation sprite layers
     staticPacks:
     - TopicalsStatic
     - ChemistryStatic
@@ -483,15 +566,31 @@
     - MedicalClothingStatic
     - EmptyMedkitsStatic
     - SurgeryStatic
+    # Being DeltaV Additions
+    - ReportingStatic
+    - EVASuit
+    - PowerCellsStatic
+    - IPCLimbsStatic
+    - PowerAugments
+    - ToolAugments
+    - SimpleToolsStaticDeltaV
+    # End DeltaV Additions
     dynamicPacks:
     - Chemistry
     - CyberneticsMedical # Shitmed change
     - Surgery # Shitmed change
-    - MedicalDeltaV # DeltaV
+    # Being DeltaV Additions
+    - MedicalDeltaV
+    - ParamedicHardsuit
+    - Cybernetics
+    # End DeltaV Additions
   - type: Machine
     board: MedicalTechFabCircuitboard
   - type: StealTarget
     stealGroup: MedicalTechFabCircuitboard
+  - type: OreSiloClient
+  - type: LatheAnnouncing
+    channels: [Medical]
 
 - type: entity
   parent: BaseLathe
@@ -514,6 +613,7 @@
     idleState: icon
     runningState: building
     staticPacks:
+    - TowelsStatic
     - ClothingCivilian
     - ClothingCargo
     - ClothingCommand
@@ -534,11 +634,8 @@
     - ClothingCentComm
     - ClothingSyndie
   - type: MaterialStorage
-    whitelist:
-      tags:
-        - Sheet
-        - RawMaterial
-        - Ingot
+    whitelist: *StandardMaterialWhitelist
+  - type: OreSiloClient
 
 - type: entity
   id: Biogenerator
@@ -582,6 +679,10 @@
     staticPacks:
     - BioGenIngredientsStatic
     - BioGenMaterialsStatic
+  - type: EmagLatheRecipes
+    emagStaticPacks:
+    - BioGenEmagStatic
+    - HostileCubesStatic
 
 - type: entity
   parent: BaseLathe
@@ -668,6 +769,7 @@
       tags:
       - Raw
       - Wooden
+      - Boll
   - type: Lathe
     idleState: base_machine
     runningState: base_machine_processing
@@ -700,12 +802,17 @@
     idleState: icon
     runningState: building
     staticPacks:
-    - FloorTilesStatic
+    - FloorDarkTilesStatic
+    - FloorSteelTilesStatic
+    - FloorWhiteTilesStatic
+    - FloorMaintsTilesStatic
+    - FloorWoodTilesStatic
+    - FloorConcreteTilesStatic
+    - CircuitFloorsStatic
+    - FloorMarbleTilesStatic
+    - FloorTilesStaticDeltaV # DeltaV
+    dynamicPacks:
+    - FauxTiles
   - type: MaterialStorage
-    whitelist:
-      tags:
-        - Sheet
-        - Metal
-        - Wooden
-        - RawMaterial
-        - Plastic
+    whitelist: *StandardMaterialWhitelist
+  - type: OreSiloClient

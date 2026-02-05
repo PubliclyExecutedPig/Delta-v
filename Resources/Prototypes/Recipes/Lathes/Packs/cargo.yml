@@ -1,10 +1,13 @@
 ## Static
 
 - type: latheRecipePack
+  parent:
+  - CargoStaticDeltaV # DeltaV
   id: CargoStatic
   recipes:
   - AppraisalTool
   - Pickaxe
+  - UtilityKnife
 
 - type: latheRecipePack
   id: CargoBoardsStatic
@@ -24,6 +27,7 @@
   - MineralScannerEmpty
   - AdvancedMineralScannerEmpty
   - OreBagOfHolding
+  - ClothingShoesBootsJump # DV - Jump Boots since its mining research
 
 - type: latheRecipePack
   parent:

@@ -7,6 +7,7 @@
     DrinkVacuumFlask: 1
     DrinkFlaskBar: 1
     DrinkShaker: 4
+    BarSpoon: 1 #quality of life
     CustomDrinkJug: 2 #to allow for custom drinks in the soda/booze dispensers
     DrinkAleBottleFull: 8
     DrinkBeerBottleFull: 8
@@ -21,6 +22,7 @@
     DrinkTequilaBottleFull: 3
     DrinkVodkaBottleFull: 3
     DrinkWhiskeyBottleFull: 3
+    DrinkJaegermisterBottleFull: 3 # Jaegerminster
     #Mixers
     DrinkColaBottleFull: 4
     DrinkCreamCarton: 5

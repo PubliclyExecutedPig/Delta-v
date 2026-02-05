@@ -4,6 +4,10 @@
   parent: BaseItem
   abstract: true
   components:
+  - type: Reactive
+    groups:
+      Extinguish: [ Touch ]
+  - type: ExtinguishableSetCollisionWake
   - type: Smokable
   - type: Sprite
   - type: Appearance
@@ -29,6 +33,8 @@
   - type: Tag
     tags:
     - Trash
+  - type: Extractable # Funkychem
+    grindableSolutionName: smokable
   - type: SolutionContainerManager
     solutions:
       smokable:
@@ -70,8 +76,8 @@
   components:
   - type: Vape
     damage:
-      groups:
-        Burn: 2
+      types:
+        Heat: 2
   - type: SolutionContainerManager
     solutions:
       smokable:

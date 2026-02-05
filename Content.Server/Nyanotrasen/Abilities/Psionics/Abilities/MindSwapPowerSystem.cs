@@ -12,9 +12,11 @@ using Content.Shared.Mind;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Components;
 using Content.Shared.Mobs.Systems;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
+using Content.Shared._DV.Abilities.Psionics;
 
 namespace Content.Server.Abilities.Psionics
 {
@@ -46,9 +48,12 @@ namespace Content.Server.Abilities.Psionics
         private void OnInit(EntityUid uid, MindSwapPowerComponent component, ComponentInit args)
         {
             _actions.AddAction(uid, ref component.MindSwapActionEntity, component.MindSwapActionId );
-            _actions.TryGetActionData( component.MindSwapActionEntity, out var actionData );
-            if (actionData is { UseDelay: not null })
+
+            if (_actions.GetAction(component.MindSwapActionEntity) is not { Comp.UseDelay: not null })
+            {
                 _actions.StartUseDelay(component.MindSwapActionEntity);
+            }
+
             if (TryComp<PsionicComponent>(uid, out var psionic) && psionic.PsionicAbility == null)
             {
                 psionic.PsionicAbility = component.MindSwapActionEntity;
@@ -135,28 +140,36 @@ namespace Content.Server.Abilities.Psionics
             if (args.Handled)
                 return;
 
-            if (!HasComp<MindSwappedComponent>(args.Mind.CurrentEntity))
-                return;
-
             //No idea where the viaCommand went. It's on the internal OnGhostAttempt, but not this layer. Maybe unnecessary.
             /*if (!args.viaCommand)
                 return;*/
 
-            args.Result = false;
-            args.Handled = true;
+            // DeltaV - start of trapped ghost fix
+            // If you're able to swap back to your original body, you should swap back before you ghost.
+            if (TryComp<MindSwappedComponent>(args.Mind.CurrentEntity, out var component)
+                && _actions.GetAction(component.MindSwapReturnActionEntity) is { } action
+                && action.Comp.AttachedEntity is not null)
+            {
+                args.Result = false;
+                args.Handled = true;
+            }
+            // DeltaV - end of trapped ghost fix
         }
 
         private void OnSwapInit(EntityUid uid, MindSwappedComponent component, ComponentInit args)
         {
             _actions.AddAction(uid, ref component.MindSwapReturnActionEntity, component.MindSwapReturnActionId );
-            _actions.TryGetActionData( component.MindSwapReturnActionEntity, out var actionData );
-            if (actionData is { UseDelay: not null })
+
+            if (_actions.GetAction(component.MindSwapReturnActionEntity) is not { Comp.UseDelay: not null })
+            {
                 _actions.StartUseDelay(component.MindSwapReturnActionEntity);
+            }
+
             if (TryComp<PsionicComponent>(uid, out var psionic) && psionic.PsionicAbility == null)
                 psionic.PsionicAbility = component.MindSwapReturnActionEntity;
         }
 
-        public void Swap(EntityUid performer, EntityUid target, bool end = false)
+        public void Swap(EntityUid performer, EntityUid target, bool end = false, int ReturnSwapCooldown = 0)
         {
             if (end && (!HasComp<MindSwappedComponent>(performer) || !HasComp<MindSwappedComponent>(target)))
                 return;
@@ -177,18 +190,16 @@ namespace Content.Server.Abilities.Psionics
             //To unnatch the minds, do it like this.
             //Have to unnattach the minds before we reattach them via transfer. Still feels weird, but seems to work well.
             _mindSystem.TransferTo(performerMindId, null);
-            _mindSystem.TransferTo(targetMindId, null);
             // Do the transfer.
+            if (targetMind != null)
+                _mindSystem.TransferTo(targetMindId, performer, ghostCheckOverride: true, false, targetMind);
             if (performerMind != null)
                 _mindSystem.TransferTo(performerMindId, target, ghostCheckOverride: true, false, performerMind);
 
-            if (targetMind != null)
-                _mindSystem.TransferTo(targetMindId, performer, ghostCheckOverride: true, false, targetMind);
-
             if (end)
             {
-                var performerMindPowerComp = EntityManager.GetComponent<MindSwappedComponent>(performer);
-                var targetMindPowerComp = EntityManager.GetComponent<MindSwappedComponent>(target);
+                var performerMindPowerComp = Comp<MindSwappedComponent>(performer);
+                var targetMindPowerComp = Comp<MindSwappedComponent>(target);
                 _actions.RemoveAction(performer, performerMindPowerComp.MindSwapReturnActionEntity);
                 _actions.RemoveAction(target, targetMindPowerComp.MindSwapReturnActionEntity);
 
@@ -200,6 +211,15 @@ namespace Content.Server.Abilities.Psionics
             var perfComp = EnsureComp<MindSwappedComponent>(performer);
             var targetComp = EnsureComp<MindSwappedComponent>(target);
 
+            // Delta V - Cooldown for Returning back
+            if (ReturnSwapCooldown > 0)
+            {
+                var cooldown = TimeSpan.FromSeconds(ReturnSwapCooldown);
+                _actions.SetCooldown(perfComp.MindSwapReturnActionEntity, cooldown);
+                _actions.SetCooldown(targetComp.MindSwapReturnActionEntity, cooldown);
+            }
+            // Delta V
+
             perfComp.OriginalEntity = target;
             targetComp.OriginalEntity = performer;
         }
@@ -209,7 +229,7 @@ namespace Content.Server.Abilities.Psionics
 
             _popupSystem.PopupEntity(Loc.GetString("mindswap-trapped"), uid, uid, Shared.Popups.PopupType.LargeCaution);
             var perfComp = EnsureComp<MindSwappedComponent>(uid);
-            _actions.RemoveAction(uid, perfComp.MindSwapReturnActionEntity, null);
+            _actions.RemoveAction(perfComp.MindSwapReturnActionEntity);
 
             if (HasComp<TelegnosticProjectionComponent>(uid))
             {

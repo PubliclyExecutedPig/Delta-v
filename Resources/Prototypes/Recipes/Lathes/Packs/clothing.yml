@@ -37,10 +37,18 @@
   - ClothingUniformJumpskirtCapFormalDress
   # HoP
   - ClothingHeadHatHopcap
+  - ClothingHeadHatBeretHop
   - ClothingUniformJumpsuitHoP
   - ClothingUniformJumpskirtHoP
+  # Generic
+  - ClothingHeadHatBeretCommand
+  - ClothingHeadHatCommandSoft
+  - ClothingUniformJumpskirtCommandGeneric
+  - ClothingUniformJumpsuitCommandGeneric
 
 - type: latheRecipePack
+  parent:
+  - ClothingEngineeringDeltaV # DeltaV
   id: ClothingEngineering
   recipes:
   - ClothingHeadHatBeretEngineering
@@ -122,6 +130,8 @@
   - ClothingUniformJumpskirtWarden
 
 - type: latheRecipePack
+  parent:
+  - ClothingServiceDeltaV # DeltaV
   id: ClothingService
   recipes:
   - ClothingUniformJumpsuitBartender
@@ -131,11 +141,13 @@
   - ClothingUniformJumpsuitChef
   - ClothingUniformJumpskirtChef
   - ClothingUniformJumpsuitClown
+  - ClothingUniformJumpskirtClown
   - ClothingUniformJumpsuitHydroponics
   - ClothingUniformJumpskirtHydroponics
   - ClothingUniformJumpsuitJanitor
   - ClothingUniformJumpskirtJanitor
   - ClothingUniformJumpsuitLawyerBlack
+  - ClothingUniformJumpskirtLawyerBlack
   - ClothingUniformJumpsuitLibrarian
   - ClothingUniformJumpskirtColorLightBrown
   - ClothingUniformJumpsuitMime
@@ -207,6 +219,7 @@
   - CarpetPurple
   - CarpetCyan
   - CarpetWhite
+  - CarpetSkyBlue
 
 - type: latheRecipePack
   parent:

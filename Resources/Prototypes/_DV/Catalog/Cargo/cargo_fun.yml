@@ -19,11 +19,11 @@
   group: market
 
 - type: cargoProduct
-  id: FoamWeapons
+  id: LaserTagSet
   icon:
-    sprite: Objects/Weapons/Guns/Rifles/foam_rifle.rsi
+    sprite: _DV/Objects/Weapons/Guns/Battery/laser_tag_gun.rsi
     state: icon
-  product: CrateFoamWeapons
-  cost: 1400
+  product: CrateLaserTagSet
+  cost: 750
   category: Fun
   group: market

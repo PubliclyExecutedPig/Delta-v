@@ -42,6 +42,11 @@ namespace Content.Shared.Humanoid
                     yield return HumanoidVisualLayers.Hair;
                     yield return HumanoidVisualLayers.FacialHair;
                     yield return HumanoidVisualLayers.Snout;
+                    yield return HumanoidVisualLayers.SnoutCover;
+                    break;
+                case HumanoidVisualLayers.Snout:
+                    yield return HumanoidVisualLayers.Snout;
+                    yield return HumanoidVisualLayers.SnoutCover;
                     break;
                 case HumanoidVisualLayers.LArm:
                     yield return HumanoidVisualLayers.LArm;
@@ -82,9 +87,15 @@ namespace Content.Shared.Humanoid
             }
         }
 
+        // Begin DeltaV - We want this data w/o needing a BodyPartComponnet
         public static HumanoidVisualLayers? ToHumanoidLayers(this BodyPartComponent part)
         {
-            switch (part.PartType)
+            return part.PartType.ToHumanoidLayers(part.Symmetry);
+        }
+
+        public static HumanoidVisualLayers? ToHumanoidLayers(this BodyPartType partType, BodyPartSymmetry partSymmetry)
+        {
+            switch (partType)
             {
                 case BodyPartType.Other:
                     break;
@@ -97,7 +108,7 @@ namespace Content.Shared.Humanoid
                     // if that's what you're looking for
                     return HumanoidVisualLayers.Head;
                 case BodyPartType.Arm:
-                    switch (part.Symmetry)
+                    switch (partSymmetry)
                     {
                         case BodyPartSymmetry.None:
                             break;
@@ -109,7 +120,7 @@ namespace Content.Shared.Humanoid
 
                     break;
                 case BodyPartType.Hand:
-                    switch (part.Symmetry)
+                    switch (partSymmetry)
                     {
                         case BodyPartSymmetry.None:
                             break;
@@ -121,7 +132,7 @@ namespace Content.Shared.Humanoid
 
                     break;
                 case BodyPartType.Leg:
-                    switch (part.Symmetry)
+                    switch (partSymmetry)
                     {
                         case BodyPartSymmetry.None:
                             break;
@@ -133,7 +144,7 @@ namespace Content.Shared.Humanoid
 
                     break;
                 case BodyPartType.Foot:
-                    switch (part.Symmetry)
+                    switch (partSymmetry)
                     {
                         case BodyPartSymmetry.None:
                             break;
@@ -148,5 +159,6 @@ namespace Content.Shared.Humanoid
 
             return null;
         }
+        // End DeltaV - We want this data w/o needing a BodyPartComponnet
     }
 }

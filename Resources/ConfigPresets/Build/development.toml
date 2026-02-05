@@ -1,12 +1,18 @@
-[game]
+﻿[game]
 # Straight in-game baby
 lobbyenabled = false
 # Dev map for faster loading & convenience
 map = "Dev"
 role_timers = false
+
 contraband_examine = false # DeltaV
 secret_weight_prototype = "SecretDeltaV" # DeltaV
 role_timer_override = "DeltaV" # DeltaV
+showgreentext = false # DeltaV
+role_loadout_timers = false
+
+[events]
+enabled = false
 
 [ghost]
 role_time = 0.5
@@ -14,6 +20,9 @@ quick_lottery = true
 
 [gateway]
 generator_enabled = false
+
+[movement]
+mob_pushing = false
 
 [physics]
 # Makes mapping annoying
@@ -34,6 +43,15 @@ preload_grids = false
 
 [admin]
 see_own_notes = true
+new_player_threshold = 120
+
+[ic]
+random_characters = false # DeltaV - disable development random characters
+random_species_weights = ""
+ssd_sleep_time = 3600
 
 [server] # DeltaV
 rules_file = "DeltaVRuleset"
+
+[control] # DeltaV
+storage_limit = 3

@@ -6,8 +6,8 @@
     - type: Sprite
       layers:
         - state: red
-        - sprite: Objects/Fun/toys.rsi
-          state: plushie_h
+        - sprite: Objects/Fun/Plushies/bee.rsi
+          state: icon
     - type: RandomSpawner
       rarePrototypes:
         - FoamBlade
@@ -36,8 +36,18 @@
         - PlushieMoth
         - PlushieMothRandom # Nyanotrasen Random Moth Plushies
         - PlushieArachind
-        - PlushieMort # DeltaV Toy, see Resources/Prototypes/_DV/Entities/Objects/Fun/toys.yml
-        - PlushieIPC # DeltaV Toy, see Resources/Prototypes/_DV/Entities/Objects/Fun/toys.yml
+        # Begin DeltaV - see Resources/Prototypes/_DV/Entities/Objects/Fun/toys.yml
+        - PlushieMort
+        - PlushieIPC
+        - PlushieFelinid
+        - PlushieOni
+        - PlushieHarpy
+        - PlushieRodentia
+        - PlushieFeroxi
+        - PlushieChitinid
+        - PlushieKitsune
+        # End DeltaV
+        - PlushieThaven # IMP port
       chance: 0.5
       offset: 0.2
 
@@ -56,14 +66,14 @@
         - ToyAi
         - ToyNuke
         - ToyFigurinePassenger
-        - ToyGriffin
+        - ToyFigurineGriffin
         - ToyHonk
         - ToyIan
         - ToyMarauder
         - ToyMauler
         - ToyGygax
         - ToyOdysseus
-        - ToyOwlman
+        - ToyFigurineOwlman
         - ToyDeathRipley
         - ToyPhazon
         - ToyFireRipley
@@ -71,7 +81,7 @@
         - ToyRipley
         - ToySeraph
         - ToyDurand
-        - ToySkeleton
+        - ToyFigurineSkeleton
         - MysteryFigureBox
         - ToyZero # DeltaV Toy, see Resources/Prototypes/_DV/Entities/Objects/Fun/toys.yml
         - ToyRenault # DeltaV Toy, see Resources/Prototypes/_DV/Entities/Objects/Fun/toys.yml
@@ -93,6 +103,7 @@
       rarePrototypes:
       - ToyFigurineNukieElite
       - ToyFigurineNukieCommander
+      - ToyFigurineCosmicCultist # DeltaV Figurine, see Resources/Prototypes/_DV/Entities/Objects/Fun/toys.yml
       rareChance: 0.05
       prototypes:
       - ToyFigurinePassenger
@@ -131,9 +142,9 @@
       - ToyFigurineSlime
       - ToyFigurineGreytider
       - ToyFigurineWizard
-      - ToyGriffin
-      - ToyOwlman
-      - ToySkeleton
+      - ToyFigurineGriffin
+      - ToyFigurineOwlman
+      - ToyFigurineSkeleton
       - ToyFigurineQueen
       - ToyFigurineSpaceDragon
       - ToyFigurineRatKing

@@ -1,4 +1,4 @@
-using Content.Server.Atmos.Components;
+using Content.Shared.Atmos.Components;
 using Content.Server.Atmos.EntitySystems;
 using Content.Server.Popups;
 using Content.Server.Power.Components;
@@ -9,6 +9,7 @@ using Content.Server.StationEvents.Events;
 using Content.Shared.Abilities.Psionics;
 using Content.Shared.Construction.EntitySystems;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Systems;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.Inventory;
 using Content.Shared.Mobs.Components;
@@ -102,8 +103,8 @@ internal sealed class NoosphericFryRule : StationEventSystem<NoosphericFryRuleCo
         var queryReactive = EntityQueryEnumerator<SharedGlimmerReactiveComponent, TransformComponent, PhysicsComponent>();
         while (queryReactive.MoveNext(out var reactive, out _, out var xform, out var physics))
         {
-            // shoot out three bolts of lighting...
-            _glimmerReactiveSystem.BeamRandomNearProber(reactive, 3, 12);
+            // shoot out one bolt of lighting...
+            _glimmerReactiveSystem.BeamRandomNearProber(reactive, 1, 12);
 
             // try to anchor if we can
             if (!xform.Anchored)

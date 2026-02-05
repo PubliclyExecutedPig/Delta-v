@@ -6,6 +6,7 @@ using Content.Server._DV.Cargo.Components;
 using Content.Server._DV.CartridgeLoader.Cartridges;
 using Content.Shared.Access.Components;
 using Content.Shared.Access.Systems;
+using Content.Shared.Cargo.Components;
 using Content.Shared.CartridgeLoader;
 using Content.Shared.CartridgeLoader.Cartridges;
 using Content.Shared.Database;
@@ -108,7 +109,7 @@ public sealed class StockMarketSystem : EntitySystem
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new InvalidOperationException($"Unknown UiAction type [{message.Action}]");
             }
 
             // Play confirmation sound if the transaction was successful
@@ -150,7 +151,7 @@ public sealed class StockMarketSystem : EntitySystem
         if (amount > 0)
         {
             // Buying: see if we can afford it
-            if (bank.Balance < totalValue)
+            if (bank.Accounts[bank.PrimaryAccount] < totalValue)
                 return false;
         }
         else
@@ -168,13 +169,13 @@ public sealed class StockMarketSystem : EntitySystem
             stockMarket.StockOwnership.Remove(companyIndex);
 
         // Update the bank account (take away for buying and give for selling)
-        _cargo.UpdateBankAccount(station, bank, -totalValue);
+        _cargo.UpdateBankAccount((station, bank), -totalValue, _cargo.CreateAccountDistribution((station, bank)));
 
         // Log the transaction
         var verb = amount > 0 ? "bought" : "sold";
         _adminLogger.Add(LogType.Action,
             LogImpact.Medium,
-            $"[StockMarket] {ToPrettyString(user):user} {verb} {Math.Abs(amount)} stocks of {company.LocalizedDisplayName} at {company.CurrentPrice:F2} credits each (Total: {totalValue})");
+            $"[StockMarket] {ToPrettyString(user):user} {verb} {Math.Abs(amount)} stocks of {company.LocalizedDisplayName} at {company.CurrentPrice:F2} spesos each (Total: {totalValue})");
 
         return true;
     }

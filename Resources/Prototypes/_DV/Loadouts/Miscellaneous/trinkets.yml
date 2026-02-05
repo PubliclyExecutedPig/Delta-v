@@ -17,12 +17,6 @@
     - SilverRing
 
 - type: loadout
-  id: Cane
-  storage:
-    back:
-    - Cane
-
-- type: loadout
   id: WhiteCane
   storage:
     back:
@@ -40,3 +34,25 @@
     back:
     - ClothingHeadHatUshanka
 
+- type: loadout
+  id: Wristwatch
+  storage:
+    back:
+    - Wristwatch
+
+- type: loadout
+  id: Eyepatch
+  equipment:
+    eyes: ClothingEyesEyepatch
+
+- type: loadout
+  id: PlushieExperiment
+  storage:
+    back:
+    - PlushieExperiment
+
+- type: loadout
+  id: PlushieBee
+  storage:
+    back:
+    - PlushieBee

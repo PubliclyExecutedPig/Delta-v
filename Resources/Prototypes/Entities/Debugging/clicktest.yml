@@ -9,14 +9,14 @@
   id: ClickTestBase
   suffix: DEBUG
   components:
-  - type: Tag
-    tags:
-      - Debug
   - type: Clickable
   - type: InteractionOutline
   - type: Sprite
     noRot: false
     sprite: Effects/clicktest.rsi
+  - type: MappingCategories # DeltaV
+    categories:
+    - Debug
 
 
 - type: entity

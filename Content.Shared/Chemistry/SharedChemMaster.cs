@@ -72,12 +72,34 @@ namespace Content.Shared.Chemistry
         }
     }
 
+    /* DeltaV - removed discarding
+    public enum ChemMasterMode
+    {
+        Transfer,
+        Discard,
+    } */
+
+    public enum ChemMasterSortingType : byte
+    {
+        None = 0,
+        Alphabetical = 1,
+        Quantity = 2,
+        Latest = 3,
+    }
+
+    [Serializable, NetSerializable]
+    public sealed class ChemMasterSortingTypeCycleMessage : BoundUserInterfaceMessage;
+
+
     public enum ChemMasterReagentAmount
     {
         U1 = 1,
         U5 = 5,
         U10 = 10,
+        U15 = 15,
+        U20 = 20,
         U25 = 25,
+        U30 = 30,
         U50 = 50,
         U100 = 100,
         All,
@@ -141,6 +163,10 @@ namespace Content.Shared.Chemistry
         /// </summary>
         public readonly IReadOnlyList<ReagentQuantity> BufferReagents;
 
+        //public readonly ChemMasterMode Mode; // DeltaV - removed discarding
+
+        public readonly ChemMasterSortingType SortingType;
+
         public readonly FixedPoint2? BufferCurrentVolume;
         public readonly uint SelectedPillType;
 
@@ -149,13 +175,16 @@ namespace Content.Shared.Chemistry
         public readonly bool UpdateLabel;
 
         public ChemMasterBoundUserInterfaceState(
-            ContainerInfo? inputContainerInfo, ContainerInfo? outputContainerInfo,
+            // DeltaV - removed discarding
+            ChemMasterSortingType sortingType, ContainerInfo? inputContainerInfo, ContainerInfo? outputContainerInfo,
             IReadOnlyList<ReagentQuantity> bufferReagents, FixedPoint2 bufferCurrentVolume,
             uint selectedPillType, uint pillDosageLimit, bool updateLabel)
         {
             InputContainerInfo = inputContainerInfo;
             OutputContainerInfo = outputContainerInfo;
             BufferReagents = bufferReagents;
+            //Mode = mode; // DeltaV - removed discarding
+            SortingType = sortingType;
             BufferCurrentVolume = bufferCurrentVolume;
             SelectedPillType = selectedPillType;
             PillDosageLimit = pillDosageLimit;

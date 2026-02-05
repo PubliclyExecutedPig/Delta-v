@@ -1,7 +1,10 @@
+# DeltaV - for context, default coco pod produces 2 biomass!
+
 - type: latheRecipe
   id: BioGenMonkeyCube
   result: MonkeyCube
-  category: Food
+  categories:
+  - Food
   completetime: 3
   materials:
     Biomass: 70
@@ -9,7 +12,8 @@
 - type: latheRecipe
   id: BioGenKoboldCube
   result: KoboldCube
-  category: Food
+  categories:
+  - Food
   completetime: 3
   materials:
     Biomass: 70
@@ -17,37 +21,41 @@
 - type: latheRecipe
   id: BioGenMaterialCloth1
   result: MaterialCloth1
-  category: Materials
+  categories:
+  - Materials
   icon:
     sprite: Objects/Materials/materials.rsi
     state: cloth
   completetime: 1
   materials:
-    Biomass: 10
+    Biomass: 6 # DeltaV - was 10
 
 - type: latheRecipe
   id: BioGenMaterialCardboard1
   result: MaterialCardboard1
-  category: Materials
+  categories:
+  - Materials
   icon:
     sprite: Objects/Materials/materials.rsi
     state: cardboard
   completetime: 1
   materials:
-    Biomass: 5
+    Biomass: 4 # DeltaV - was 5
 
 - type: latheRecipe
   id: BioGenPaper
   result: Paper
-  category: Materials
+  categories:
+  - Materials
   completetime: 1
   materials:
-    Biomass: 2
+    Biomass: 1 # DeltaV - was 2
 
 - type: latheRecipe
   id: BioGenPaperRolling1
   result: PaperRolling1
-  category: Materials
+  categories:
+  - Materials
   completetime: 1
   materials:
     Biomass: 1
@@ -55,16 +63,18 @@
 - type: latheRecipe
   id: BioGenCandle
   result: Candle
-  category: Materials
+  categories:
+  - Materials
   completetime: 3
   materials:
-    Biomass: 3
+    Biomass: 2 # DeltaV - was 3
 
 - type: latheRecipe
   id: BioGenPlantBGone
   resultReagents:
     PlantBGone: 10
-  category: Chemicals
+  categories:
+  - Chemicals
   icon:
     sprite: Objects/Tools/Hydroponics/sprays.rsi
     state: plantbgone
@@ -76,7 +86,8 @@
   id: BioGenWeedKiller
   resultReagents:
     WeedKiller: 10
-  category: Chemicals
+  categories:
+  - Chemicals
   icon:
     sprite: Objects/Tools/Hydroponics/sprays.rsi
     state: weedspray
@@ -88,7 +99,8 @@
   id: BioGenPestKiller
   resultReagents:
     PestKiller: 10
-  category: Chemicals
+  categories:
+  - Chemicals
   icon:
     sprite: Objects/Tools/Hydroponics/sprays.rsi
     state: weedspray
@@ -100,7 +112,8 @@
   id: BioGenLeft4Zed
   resultReagents:
     Left4Zed: 10
-  category: Chemicals
+  categories:
+  - Chemicals
   icon:
     sprite: Objects/Specific/Chemistry/bottle.rsi
     state: bottle-1
@@ -112,121 +125,150 @@
   id: BioGenEZNutrient
   resultReagents:
     EZNutrient: 10
-  category: Chemicals
+  categories:
+  - Chemicals
   icon:
     sprite: Objects/Specific/Chemistry/bottle.rsi
     state: bottle-1
   completetime: 1
   materials:
-    Biomass: 15
+    Biomass: 10 # DeltaV - was 15
 
 - type: latheRecipe
   id: BioGenRobustHarvest
   resultReagents:
     RobustHarvest: 10
-  category: Chemicals
+  categories:
+  - Chemicals
   icon:
     sprite: Objects/Specific/Chemistry/bottle.rsi
     state: bottle-1
   completetime: 1
   materials:
-    Biomass: 15
+    Biomass: 14 # DeltaV - was 15
 
 - type: latheRecipe
   id: BioGenMilk
   resultReagents:
     Milk: 10
-  category: Food
+  categories:
+  - Food
   icon:
     sprite: Objects/Consumable/Drinks/milk.rsi
     state: icon
   completetime: 1
   materials:
-    Biomass: 12
+    Biomass: 8 # DeltaV - was 12
 
 - type: latheRecipe
   id: BioGenMilkSoy
   resultReagents:
     MilkSoy: 10
-  category: Food
+  categories:
+  - Food
   icon:
     sprite: Objects/Consumable/Drinks/soymilk.rsi
     state: icon
   completetime: 1
   materials:
-    Biomass: 12
+    Biomass: 8 # DeltaV - was 12
 
 - type: latheRecipe
   id: BioGenEthanol
   resultReagents:
     Ethanol: 10
-  category: Food
+  categories:
+  - Food
   icon:
     sprite: Objects/Consumable/Drinks/glass_clear.rsi
     state: icon
   completetime: 1
   materials:
-    Biomass: 18
+    Biomass: 12 # DeltaV - was 18
 
 - type: latheRecipe
   id: BioGenCream
   resultReagents:
     Cream: 10
-  category: Food
+  categories:
+  - Food
   icon:
     sprite: Objects/Consumable/Drinks/cream.rsi
     state: icon
   completetime: 1
   materials:
-    Biomass: 18
+    Biomass: 12 # DeltaV - was 18
 
 - type: latheRecipe
   id: BioGenBlackpepper
   resultReagents:
     Blackpepper: 10
-  category: Food
+  categories:
+  - Food
   icon:
     sprite: Objects/Consumable/Food/condiments.rsi
     state: packet-pepper
   completetime: 1
   materials:
-    Biomass: 18
+    Biomass: 12 # DeltaV - was 18
 
 - type: latheRecipe
   id: BioGenEnzyme
   resultReagents:
     Enzyme: 10
-  category: Food
+  categories:
+  - Food
   icon:
     sprite: Objects/Consumable/Food/condiments.rsi
     state: bottle-empty
   completetime: 1
   materials:
-    Biomass: 18
+    Biomass: 12 # DeltaV - was 18
 
 - type: latheRecipe
   id: BioGenFlour
   resultReagents:
     Flour: 10
-  category: Food
+  categories:
+  - Food
   icon:
     sprite: Objects/Consumable/Food/ingredients.rsi
     state: flour-big
   completetime: 1
   materials:
-    Biomass: 18
+    Biomass: 10 # DeltaV - was 18
 
 - type: latheRecipe
   id: BioGenSugar
   resultReagents:
     Sugar: 10
-  category: Food
+  categories:
+  - Food
   icon:
     sprite: Objects/Consumable/Food/ingredients.rsi
     state: sugar-big
   completetime: 1
   materials:
-    Biomass: 18
+    Biomass: 10 # DeltaV - was 18
 
+- type: latheRecipe
+  id: BioGenDiseaseSwab
+  result: DiseaseSwab
+  categories:
+  - Materials
+  completetime: 3
+  materials:
+    Biomass: 2
 
-
+- type: latheRecipe
+  id: BioGenUnstableMutagen
+  resultReagents:
+    UnstableMutagen: 10
+  categories:
+  - Chemicals
+  icon:
+    sprite: Objects/Specific/Chemistry/bottle.rsi
+    state: bottle-1
+  completetime: 5
+  materials:
+    Biomass: 20

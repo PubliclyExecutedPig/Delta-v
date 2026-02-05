@@ -2,20 +2,20 @@ using Content.Server.Administration.Logs;
 using Content.Server.Body.Systems;
 using Content.Server.Construction;
 using Content.Server.Explosion.EntitySystems;
-using Content.Server.DeviceLinking.Events;
 using Content.Server.DeviceLinking.Systems;
 using Content.Server.Hands.Systems;
 using Content.Server.Kitchen.Components;
 using Content.Server.Power.Components;
 using Content.Server.Power.EntitySystems;
-using Content.Server.Temperature.Components;
 using Content.Server.Temperature.Systems;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Part;
 using Content.Shared.Chemistry.Components.SolutionManager;
 using Content.Shared.Chemistry.EntitySystems;
+using Content.Shared.Chemistry.Reaction;
 using Content.Shared.Construction.EntitySystems;
 using Content.Shared.Database;
+using Content.Shared.DeviceLinking.Events;
 using Content.Shared.Destructible;
 using Content.Shared.FixedPoint;
 using Content.Shared.Interaction;
@@ -39,8 +39,8 @@ using Robust.Shared.Timing;
 using Content.Shared.Stacks;
 using Content.Server.Construction.Components;
 using Content.Shared.Chat;
-using Content.Shared.Damage;
-using Robust.Shared.Utility;
+using Content.Shared.Damage.Components;
+using Content.Shared.Temperature.Components;
 
 namespace Content.Server.Kitchen.EntitySystems
 {
@@ -69,8 +69,10 @@ namespace Content.Server.Kitchen.EntitySystems
         [Dependency] private readonly IAdminLogManager _adminLogger = default!;
         [Dependency] private readonly SharedSuicideSystem _suicide = default!;
 
-        [ValidatePrototypeId<EntityPrototype>]
-        private const string MalfunctionSpark = "Spark";
+        private static readonly EntProtoId MalfunctionSpark = "Spark";
+
+        private static readonly ProtoId<TagPrototype> MetalTag = "Metal";
+        private static readonly ProtoId<TagPrototype> PlasticTag = "Plastic";
 
         public override void Initialize()
         {
@@ -101,6 +103,7 @@ namespace Content.Server.Kitchen.EntitySystems
             SubscribeLocalEvent<ActiveMicrowaveComponent, EntRemovedFromContainerMessage>(OnActiveMicrowaveRemove);
 
             SubscribeLocalEvent<ActivelyMicrowavedComponent, OnConstructionTemperatureEvent>(OnConstructionTemp);
+            SubscribeLocalEvent<ActivelyMicrowavedComponent, SolutionRelayEvent<ReactionAttemptEvent>>(OnReactionAttempt);
 
             SubscribeLocalEvent<FoodRecipeProviderComponent, GetSecretRecipesEvent>(OnGetSecretRecipes);
         }
@@ -126,18 +129,42 @@ namespace Content.Server.Kitchen.EntitySystems
 
         private void OnActiveMicrowaveInsert(Entity<ActiveMicrowaveComponent> ent, ref EntInsertedIntoContainerMessage args)
         {
-            AddComp<ActivelyMicrowavedComponent>(args.Entity);
+            var microwavedComp = AddComp<ActivelyMicrowavedComponent>(args.Entity);
+            microwavedComp.Microwave = ent.Owner;
         }
 
         private void OnActiveMicrowaveRemove(Entity<ActiveMicrowaveComponent> ent, ref EntRemovedFromContainerMessage args)
         {
-            EntityManager.RemoveComponentDeferred<ActivelyMicrowavedComponent>(args.Entity);
+            RemCompDeferred<ActivelyMicrowavedComponent>(args.Entity);
         }
 
+        // Stop items from transforming through constructiongraphs while being microwaved.
+        // They might be reserved for a microwave recipe.
         private void OnConstructionTemp(Entity<ActivelyMicrowavedComponent> ent, ref OnConstructionTemperatureEvent args)
         {
             args.Result = HandleResult.False;
-            return;
+        }
+
+        // Stop reagents from reacting if they are currently reserved for a microwave recipe.
+        // For example Egg would cook into EggCooked, causing it to not being removed once we are done microwaving.
+        private void OnReactionAttempt(Entity<ActivelyMicrowavedComponent> ent, ref SolutionRelayEvent<ReactionAttemptEvent> args)
+        {
+            if (!TryComp<ActiveMicrowaveComponent>(ent.Comp.Microwave, out var activeMicrowaveComp))
+                return;
+
+            if (activeMicrowaveComp.PortionedRecipe.Item1 == null) // no recipe selected
+                return;
+
+            var recipeReagents = activeMicrowaveComp.PortionedRecipe.Item1.IngredientsReagents.Keys;
+
+            foreach (var reagent in recipeReagents)
+            {
+                if (args.Event.Reaction.Reactants.ContainsKey(reagent))
+                {
+                    args.Event.Cancelled = true;
+                    return;
+                }
+            }
         }
 
         /// <summary>
@@ -176,33 +203,29 @@ namespace Content.Server.Kitchen.EntitySystems
             // this is spaghetti ngl
             foreach (var item in component.Storage.ContainedEntities)
             {
-                if (!TryComp<SolutionContainerManagerComponent>(item, out var solMan))
+                // use the same reagents as when we selected the recipe
+                if (!_solutionContainer.TryGetDrainableSolution(item, out var solutionEntity, out var solution))
                     continue;
 
-                // go over every solution
-                foreach (var (_, soln) in _solutionContainer.EnumerateSolutions((item, solMan)))
+                foreach (var (reagent, _) in recipe.IngredientsReagents)
                 {
-                    var solution = soln.Comp.Solution;
-                    foreach (var (reagent, _) in recipe.IngredientsReagents)
+                    // removed everything
+                    if (!totalReagentsToRemove.ContainsKey(reagent))
+                        continue;
+
+                    var quant = solution.GetTotalPrototypeQuantity(reagent);
+
+                    if (quant >= totalReagentsToRemove[reagent])
                     {
-                        // removed everything
-                        if (!totalReagentsToRemove.ContainsKey(reagent))
-                            continue;
-
-                        var quant = solution.GetTotalPrototypeQuantity(reagent);
-
-                        if (quant >= totalReagentsToRemove[reagent])
-                        {
-                            quant = totalReagentsToRemove[reagent];
-                            totalReagentsToRemove.Remove(reagent);
-                        }
-                        else
-                        {
-                            totalReagentsToRemove[reagent] -= quant;
-                        }
-
-                        _solutionContainer.RemoveReagent(soln, reagent, quant);
+                        quant = totalReagentsToRemove[reagent];
+                        totalReagentsToRemove.Remove(reagent);
                     }
+                    else
+                    {
+                        totalReagentsToRemove[reagent] -= quant;
+                    }
+
+                    _solutionContainer.RemoveReagent(solutionEntity.Value, reagent, quant);
                 }
             }
 
@@ -217,7 +240,7 @@ namespace Content.Server.Kitchen.EntitySystems
                         // If an entity has a stack component, use the stacktype instead of prototype id
                         if (TryComp<StackComponent>(item, out var stackComp))
                         {
-                            itemID = _prototype.Index<StackPrototype>(stackComp.StackTypeId).Spawn;
+                            itemID = _prototype.Index(stackComp.StackTypeId).Spawn;
                         }
                         else
                         {
@@ -240,7 +263,7 @@ namespace Content.Server.Kitchen.EntitySystems
                             {
                                 _container.Remove(item, component.Storage);
                             }
-                            _stack.Use(item, 1, stackComp);
+                            _stack.ReduceCount((item, stackComp), 1);
                             break;
                         }
                         else
@@ -419,8 +442,15 @@ namespace Content.Server.Kitchen.EntitySystems
 
         private void OnAnchorChanged(EntityUid uid, MicrowaveComponent component, ref AnchorStateChangedEvent args)
         {
+            // DeltaV - start of microwave ejection bugfix
             if (!args.Anchored)
+            {
+                // DeltaV's MicrowaveEventsSystem changes prevent ejection from active microwave, so stop cooking first
+                StopCooking((uid, component));
                 _container.EmptyContainer(component.Storage);
+                UpdateUserInterfaceState(uid, component);
+            }
+            // DeltaV - end of microwave ejection bugfix
         }
 
         private void OnSignalReceived(Entity<MicrowaveComponent> ent, ref SignalReceivedEvent args)
@@ -438,7 +468,12 @@ namespace Content.Server.Kitchen.EntitySystems
         {
             _userInterface.SetUiState(uid, MicrowaveUiKey.Key, new MicrowaveUpdateUserInterfaceState(
                 GetNetEntityArray(component.Storage.ContainedEntities.ToArray()),
-                HasComp<ActiveMicrowaveComponent>(uid),
+                // DeltaV - start of microwave ejection bugfix
+                (
+                    EntityManager.TryGetComponent<ActiveMicrowaveComponent>(uid, out var active)
+                    && active.LifeStage < ComponentLifeStage.Stopping
+                ),
+                // DeltaV - end of microwave ejection bugfix
                 component.CurrentCookTimeButtonIndex,
                 component.CurrentCookTimerTime,
                 component.CurrentCookTimeEnd
@@ -464,6 +499,10 @@ namespace Content.Server.Kitchen.EntitySystems
         /// <param name="ent"></param>
         public void Explode(Entity<MicrowaveComponent> ent)
         {
+            // DeltaV - start of microwave ejection bugfix
+            // DeltaV's MicrowaveEventsSystem changes prevent ejection from active microwave, so stop cooking first
+            StopCooking(ent);
+            // DeltaV - end of microwave ejection bugfix
             ent.Comp.Broken = true; // Make broken so we stop processing stuff
             _explosion.TriggerExplosive(ent);
             if (TryComp<MachineComponent>(ent, out var machine))
@@ -471,6 +510,10 @@ namespace Content.Server.Kitchen.EntitySystems
                 _container.CleanContainer(machine.BoardContainer);
                 _container.EmptyContainer(machine.PartContainer);
             }
+
+            // DeltaV - start of microwave ejection bugfix
+            UpdateUserInterfaceState(ent, ent.Comp);
+            // DeltaV - end of microwave ejection bugfix
 
             _adminLogger.Add(LogType.Action, LogImpact.Medium,
                 $"{ToPrettyString(ent)} exploded from unsafe cooking!");
@@ -519,8 +562,12 @@ namespace Content.Server.Kitchen.EntitySystems
             foreach (var item in component.Storage.ContainedEntities.ToArray())
             {
                 // special behavior when being microwaved ;)
-                var ev = new BeingMicrowavedEvent(uid, user, component.CurrentCookTimerTime);
+                var ev = new BeingMicrowavedEvent(uid, user, component.CurrentCookTimerTime); // DeltaV Additions - Improve animal cube interactions (31668 - Upstream)
                 RaiseLocalEvent(item, ev);
+
+                // TODO MICROWAVE SPARKS & EFFECTS
+                // Various microwaveable entities should probably spawn a spark, play a sound, and generate a pop=up.
+                // This should probably be handled by the microwave system, with fields in BeingMicrowavedEvent.
 
                 if (ev.Handled)
                 {
@@ -528,12 +575,12 @@ namespace Content.Server.Kitchen.EntitySystems
                     return;
                 }
 
-                if (_tag.HasTag(item, "Metal"))
+                if (_tag.HasTag(item, MetalTag))
                 {
                     malfunctioning = true;
                 }
 
-                if (_tag.HasTag(item, "Plastic"))
+                if (_tag.HasTag(item, PlasticTag))
                 {
                     var junk = Spawn(component.BadRecipeEntityId, Transform(uid).Coordinates);
                     _container.Insert(junk, component.Storage);
@@ -541,7 +588,8 @@ namespace Content.Server.Kitchen.EntitySystems
                     continue;
                 }
 
-                AddComp<ActivelyMicrowavedComponent>(item);
+                var microwavedComp = AddComp<ActivelyMicrowavedComponent>(item);
+                microwavedComp.Microwave = uid;
 
                 string? solidID = null;
                 int amountToAdd = 1;
@@ -560,33 +608,20 @@ namespace Content.Server.Kitchen.EntitySystems
                 }
 
                 if (solidID is null)
-                {
                     continue;
-                }
 
-
-                if (solidsDict.ContainsKey(solidID))
-                {
+                if (!solidsDict.TryAdd(solidID, amountToAdd))
                     solidsDict[solidID] += amountToAdd;
-                }
-                else
-                {
-                    solidsDict.Add(solidID, amountToAdd);
-                }
 
-                if (!TryComp<SolutionContainerManagerComponent>(item, out var solMan))
+                // only use reagents we have access to
+                // you have to break the eggs before we can use them!
+                if (!_solutionContainer.TryGetDrainableSolution(item, out var _, out var solution))
                     continue;
 
-                foreach (var (_, soln) in _solutionContainer.EnumerateSolutions((item, solMan)))
+                foreach (var (reagent, quantity) in solution.Contents)
                 {
-                    var solution = soln.Comp.Solution;
-                    foreach (var (reagent, quantity) in solution.Contents)
-                    {
-                        if (reagentDict.ContainsKey(reagent.Prototype))
-                            reagentDict[reagent.Prototype] += quantity;
-                        else
-                            reagentDict.Add(reagent.Prototype, quantity);
-                    }
+                    if (!reagentDict.TryAdd(reagent.Prototype, quantity))
+                        reagentDict[reagent.Prototype] += quantity;
                 }
             }
 
@@ -693,11 +728,16 @@ namespace Content.Server.Kitchen.EntitySystems
                     }
                 }
 
+                // DeltaV - start of microwave ejection bugfix
+                // StopCooking should be in front of both:
+                //  - EmptyContainer() call, because DeltaV MicrowaveEventsSystem prevents ejection from active microwave
+                //  - UpdateUserInterfaceState() call - not very relevant, but UI shouldn't be "busy" after cooking is done
+                StopCooking((uid, microwave));
                 _container.EmptyContainer(microwave.Storage);
                 microwave.CurrentCookTimeEnd = TimeSpan.Zero;
                 UpdateUserInterfaceState(uid, microwave);
                 _audio.PlayPvs(microwave.FoodDoneSound, uid);
-                StopCooking((uid, microwave));
+                // DeltaV - end of microwave ejection bugfix
             }
         }
 
@@ -709,7 +749,7 @@ namespace Content.Server.Kitchen.EntitySystems
         {
             foreach (ProtoId<FoodRecipePrototype> recipeId in ent.Comp.ProvidedRecipes)
             {
-                if (_prototype.TryIndex(recipeId, out var recipeProto))
+                if (_prototype.Resolve(recipeId, out var recipeProto))
                 {
                     args.Recipes.Add(recipeProto);
                 }
@@ -732,7 +772,7 @@ namespace Content.Server.Kitchen.EntitySystems
             if (!HasContents(ent.Comp) || HasComp<ActiveMicrowaveComponent>(ent))
                 return;
 
-            _container.Remove(EntityManager.GetEntity(args.EntityID), ent.Comp.Storage);
+            _container.Remove(GetEntity(args.EntityID), ent.Comp.Storage);
             UpdateUserInterfaceState(ent, ent.Comp);
         }
 

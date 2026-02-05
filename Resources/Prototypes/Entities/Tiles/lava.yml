@@ -7,6 +7,8 @@
     snap:
     - Wall
   components:
+  - type: TileEmission
+    color: "#FF4500"
   - type: StepTrigger
     requiredTriggeredSpeed: 0
     intersectRatio: 0.1
@@ -15,10 +17,17 @@
         - Catwalk
   - type: TileEntityEffect
     effects:
-    - !type:FlammableReaction
+    - !type:Flammable
       multiplier: 3.75
       multiplierOnExisting: 0.75
     - !type:Ignite
+  # Begin Goobstation - fishing
+  - type: FishingSpot
+    fishList: !type:NestedSelector
+      tableId: LavaFishingLootTable
+    fishDefaultTimer: 25.0
+    fishTimerVariety: 15.0
+  # End Goobstation - fishing
   - type: Transform
     anchored: true
   - type: SyncSprite
@@ -34,6 +43,8 @@
     state: full
   - type: IconSmooth
     key: floor
+    additionalKeys:
+    - walls
     base: lava
   - type: Physics
     bodyType: Static
@@ -49,6 +60,19 @@
           - ItemMask
         density: 1000
         hard: false
+      # Delta-V - Enables fishing in lava.
+      fishing:
+        shape:
+          !type:PhysShapeCircle
+          radius: 0.4
+        layer:
+        - ItemMask
+        mask:
+        - HighImpassable
+        density: 1000
+        hard: false
   - type: Tag
     tags:
       - HideContextMenu
+  - type: CosmicCorruptible # DeltaV - Cosmic Cult
+    convertTo: FloorCosmicDecay

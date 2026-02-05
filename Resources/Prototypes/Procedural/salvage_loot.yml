@@ -26,7 +26,7 @@
           cost: 2
         - proto: CloningPodMachineCircuitboard
           cost: 2
-        - proto: CognizineChemistryBottle
+        - proto: ChemistryBottleCognizine
         - proto: FoodBoxDonkpocketCarp
           prob: 0.5
         - proto: CrateSalvageEquipment
@@ -45,7 +45,7 @@
           cost: 2
         - proto: NuclearBombKeg
           cost: 5
-        - proto: OmnizineChemistryBottle
+        - proto: ChemistryBottleOmnizine
           prob: 0.5
         - proto: PortableGeneratorPacman
           cost: 2
@@ -105,6 +105,15 @@
         - proto: WeaponTeslaGun
           prob: 0.1
           cost: 2
+        # Begin DeltaV Additions
+        - proto: AncientBookDamagedCommon
+        - proto: AncientBookDamagedUncommon
+          prob: 0.7
+          cost: 2
+        - proto: AncientBookDamagedRare
+          prob: 0.3
+          cost: 4
+        # End DeltaV Additions
 
 # Mob loot table
 

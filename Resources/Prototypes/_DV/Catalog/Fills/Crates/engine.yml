@@ -43,3 +43,17 @@
     - id: PlasmaTankFilled
       amount: !type:RangeNumberSelector
         range: 8, 12
+
+- type: entity
+  id: CrateEngineeringTEG
+  parent: CrateEngineeringSecure
+  name: TEG parts
+  description: TEG and 2 circulators.
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      entity_storage: !type:AllSelector
+        children:
+        - id: TegFlatpack
+        - id: CirculatorFlatpack
+          amount: 2

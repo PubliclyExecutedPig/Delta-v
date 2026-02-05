@@ -5,9 +5,6 @@
   description: What is it...?
   suffix: DEBUG
   components:
-  - type: Tag
-    tags:
-      - Debug
   - type: Sprite
     sprite: Objects/Misc/skub.rsi
     state: icon
@@ -19,3 +16,6 @@
     - 1, 4, 6, 4
     - 6, 2, 6, 2
     - 5, 3, 5, 5
+  - type: MappingCategories # DeltaV
+    categories:
+    - Debug

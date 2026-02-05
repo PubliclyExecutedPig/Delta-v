@@ -8,6 +8,8 @@
   - Gauze
 
 - type: latheRecipePack
+  parent:
+  - BasicChemistryStaticDeltaV # DeltaV
   id: BasicChemistryStatic
   recipes:
   - Beaker
@@ -15,6 +17,8 @@
   - Syringe
   - PillCanister
   - HandLabeler
+  - BaseChemistryEmptyVial
+  - Dropper
 
 - type: latheRecipePack
   parent:
@@ -48,6 +52,9 @@
   - DiseaseSwab
   - BodyBag
   - WhiteCane
+  - OffsetCane
+  - OffsetCaneWood
+  - JetInjector
 
 - type: latheRecipePack
   id: RollerBedsStatic
@@ -57,6 +64,8 @@
   - EmergencyRollerBedSpawnFolded
 
 - type: latheRecipePack
+  parent:
+  - MedicalClothingStaticDeltaV # DeltaV
   id: MedicalClothingStatic
   recipes:
   - ClothingHandsGlovesLatex
@@ -99,6 +108,9 @@
   - SyringeCryostasis
   - BluespaceBeaker
   - SyringeBluespace
+  - LauncherSyringe
+  - MiniSyringe
+  - AdvancedJetInjector
 
 - type: latheRecipePack
   parent:

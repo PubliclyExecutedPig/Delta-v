@@ -10,18 +10,19 @@ namespace Content.Shared.Humanoid
         Tail,
         Hair,
         FacialHair,
+        UndergarmentTop,
+        UndergarmentBottom,
         Chest,
-        Underwear, // DeltaV
-        Undershirt, // DeltaV
         Head,
         Snout,
+        SnoutCover, // things layered over snouts (i.e. noses)
         HeadSide, // side parts (i.e., frills)
         HeadTop,  // top parts (i.e., ears)
+        NeckFluff, // TheDen - Ovinia, for fluff on necks
         Eyes,
         RArm,
         LArm,
         RHand,
-
         LHand,
         RLeg,
         LLeg,
@@ -31,6 +32,8 @@ namespace Content.Shared.Humanoid
         StencilMask,
         Ensnare,
         Fire,
+        LArmExtension, // Frontier: a species-specific extension layer, e.g. for harpy wings
+        RArmExtension, // Frontier: a species-specific extension layer, e.g. for harpy wings
 
     }
 }

@@ -1,11 +1,12 @@
 using Content.Server.Shuttles.Components;
 using Content.Server.Shuttles.Systems;
-using Content.Server.Station.Components;
-using Content.Server.Station.Systems;
 using Content.Shared._DV.CCVars;
 using Content.Shared.Tag;
-using Robust.Server.GameObjects;
+using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.Configuration;
+using Robust.Shared.Prototypes;
+using Robust.Shared.Utility;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Content.Server.Shipyard;
 
@@ -16,13 +17,11 @@ public sealed class ShipyardSystem : EntitySystem
 {
     [Dependency] private readonly IConfigurationManager _config = default!;
     [Dependency] private readonly MapDeleterShuttleSystem _mapDeleterShuttle = default!;
-    [Dependency] private readonly MapSystem _map = default!;
     [Dependency] private readonly MapLoaderSystem _mapLoader = default!;
+    [Dependency] private readonly SharedMapSystem _map = default!;
     [Dependency] private readonly ShuttleSystem _shuttle = default!;
-    [Dependency] private readonly StationSystem _station = default!;
 
-    [ValidatePrototypeId<TagPrototype>]
-    public string DockTag = "DockShipyard";
+    public ProtoId<TagPrototype> DockTag = "DockShipyard";
 
     public bool Enabled;
 
@@ -36,61 +35,47 @@ public sealed class ShipyardSystem : EntitySystem
     /// <summary>
     /// Creates a ship from its yaml path in the shipyard.
     /// </summary>
-    public Entity<ShuttleComponent>? TryCreateShuttle(string path)
+    public bool TryCreateShuttle(ResPath path, [NotNullWhen(true)] out Entity<ShuttleComponent>? shuttle)
     {
+        shuttle = null;
         if (!Enabled)
-            return null;
+            return false;
 
         var map = _map.CreateMap(out var mapId);
-        _map.SetPaused(map, false);
-
-        if (!_mapLoader.TryLoad(mapId, path, out var grids))
+        if (!_mapLoader.TryLoadGrid(mapId, path, out var grid))
         {
             Log.Error($"Failed to load shuttle {path}");
             Del(map);
-            return null;
+            return false;
         }
 
-        // only 1 grid is supported, no tramshuttle
-        if (grids.Count != 1)
-        {
-            var error = grids.Count < 1 ? "less" : "more";
-            Log.Error($"Shuttle {path} had {error} than 1 grid, which is not supported.");
-            Del(map);
-            return null;
-        }
-
-        var uid = grids[0];
-        if (!TryComp<ShuttleComponent>(uid, out var comp))
+        if (!TryComp<ShuttleComponent>(grid, out var comp))
         {
             Log.Error($"Shuttle {path}'s grid was missing ShuttleComponent");
             Del(map);
-            return null;
+            return false;
         }
 
-        _mapDeleterShuttle.Enable(uid);
-        return (uid, comp);
+        _map.SetPaused(map, false);
+        _mapDeleterShuttle.Enable(grid.Value);
+        shuttle = (grid.Value, comp);
+        return true;
     }
 
     /// <summary>
-    /// Adds a ship to the shipyard and attempts to ftl-dock it to the given station.
+    /// Adds a ship to the shipyard and attempts to ftl-dock it to the given grid.
     /// </summary>
-    public Entity<ShuttleComponent>? TrySendShuttle(Entity<StationDataComponent?> station, string path)
+    public bool TrySendShuttle(Entity<ShuttleComponent?> shuttleDestination, ResPath path, [NotNullWhen(true)] out Entity<ShuttleComponent>? shuttle)
     {
-        if (!Resolve(station, ref station.Comp))
-            return null;
+        shuttle = null;
+        if (!Resolve(shuttleDestination, ref shuttleDestination.Comp))
+            return false;
 
-        if (_station.GetLargestGrid(station.Comp) is not {} grid)
-        {
-            Log.Error($"Station {ToPrettyString(station):station} had no largest grid to FTL to");
-            return null;
-        }
+        if (!TryCreateShuttle(path, out shuttle))
+            return false;
 
-        if (TryCreateShuttle(path) is not {} shuttle)
-            return null;
-
-        Log.Info($"Shuttle {path} was spawned for {ToPrettyString(station):station}, FTLing to {grid}");
-        _shuttle.FTLToDock(shuttle, shuttle.Comp, grid, priorityTag: DockTag);
-        return shuttle;
+        Log.Info($"Shuttle {path} was spawned for {ToPrettyString(shuttleDestination):station}");
+        _shuttle.FTLToDock(shuttle.Value, shuttle.Value.Comp, shuttleDestination, priorityTag: DockTag);
+        return true;
     }
 }

@@ -54,7 +54,7 @@ public record struct TransferDnaEvent()
 }
 
 /// <summary>
-/// An event to generate and act upon new DNA for an entity.
+/// Raised on an entity when its DNA has been changed.
 /// </summary>
 [ByRefEvent]
 public record struct GenerateDnaEvent()
@@ -75,7 +75,10 @@ public record struct GenerateDnaEvent()
 /// </summary>
 public sealed class TryAccessFingerprintEvent : CancellableEntityEventArgs, IInventoryRelayEvent
 {
-    SlotFlags IInventoryRelayEvent.TargetSlots => ~SlotFlags.POCKET;
+    SlotFlags IInventoryRelayEvent.TargetSlots => SlotFlags.WITHOUT_POCKET;
 
+    /// <summary>
+    ///     Entity that blocked access.
+    /// </summary>
     public EntityUid? Blocker;
 }

@@ -3,27 +3,32 @@ using Content.Server.Administration.Logs;
 using Content.Server.Atmos.EntitySystems;
 using Content.Server.Body.Components;
 using Content.Server.Temperature.Components;
+using Content.Shared._DV.CosmicCult.Components; // DeltaV
 using Content.Shared.Alert;
 using Content.Shared.Atmos;
-using Content.Shared.Damage;
+using Content.Shared.Damage.Components;
+using Content.Shared.Damage.Systems;
 using Content.Shared.Database;
 using Content.Shared.Inventory;
 using Content.Shared.Rejuvenate;
 using Content.Shared.Temperature;
-using Robust.Shared.Physics.Components;
 using Robust.Shared.Prototypes;
-using Robust.Shared.Physics.Events;
 using Content.Shared.Projectiles;
+using Content.Shared._Goobstation.Temperature.Components;
+using Content.Shared._Goobstation.Temperature;
+using Content.Shared.Temperature.Components;
+using Content.Shared.Temperature.Systems;
 
 namespace Content.Server.Temperature.Systems;
 
-public sealed class TemperatureSystem : EntitySystem
+public sealed class TemperatureSystem : SharedTemperatureSystem
 {
     [Dependency] private readonly AlertsSystem _alerts = default!;
     [Dependency] private readonly AtmosphereSystem _atmosphere = default!;
     [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly IAdminLogManager _adminLogger = default!;
     [Dependency] private readonly TemperatureSystem _temperature = default!;
+    private EntityQuery<TemperatureImmunityComponent> _immuneQuery; // DeltaV
 
     /// <summary>
     ///     All the components that will have their damage updated at the end of the tick.
@@ -36,21 +41,24 @@ public sealed class TemperatureSystem : EntitySystem
 
     private float _accumulatedFrametime;
 
-    [ValidatePrototypeId<AlertCategoryPrototype>]
-    public const string TemperatureAlertCategory = "Temperature";
+    public static readonly ProtoId<AlertCategoryPrototype> TemperatureAlertCategory = "Temperature";
 
     public override void Initialize()
     {
+        base.Initialize();
+
         SubscribeLocalEvent<TemperatureComponent, OnTemperatureChangeEvent>(EnqueueDamage);
         SubscribeLocalEvent<TemperatureComponent, AtmosExposedUpdateEvent>(OnAtmosExposedUpdate);
         SubscribeLocalEvent<TemperatureComponent, RejuvenateEvent>(OnRejuvenate);
         SubscribeLocalEvent<AlertsComponent, OnTemperatureChangeEvent>(ServerAlert);
-        SubscribeLocalEvent<TemperatureProtectionComponent, InventoryRelayedEvent<ModifyChangedTemperatureEvent>>(
-            OnTemperatureChangeAttempt);
+        Subs.SubscribeWithRelay<TemperatureProtectionComponent, ModifyChangedTemperatureEvent>(OnTemperatureChangeAttempt, held: false);
 
         SubscribeLocalEvent<InternalTemperatureComponent, MapInitEvent>(OnInit);
 
         SubscribeLocalEvent<ChangeTemperatureOnCollideComponent, ProjectileHitEvent>(ChangeTemperatureOnCollide);
+
+        SubscribeLocalEvent<SpecialLowTempImmunityComponent, TemperatureImmunityEvent>(OnCheckLowTemperatureImmunity); // Goob edit
+        SubscribeLocalEvent<SpecialHighTempImmunityComponent, TemperatureImmunityEvent>(OnCheckHighTemperatureImmunity); // Goob edit
 
         // Allows overriding thresholds based on the parent's thresholds.
         SubscribeLocalEvent<TemperatureComponent, EntParentChangedMessage>(OnParentChange);
@@ -58,6 +66,7 @@ public sealed class TemperatureSystem : EntitySystem
             OnParentThresholdStartup);
         SubscribeLocalEvent<ContainerTemperatureDamageThresholdsComponent, ComponentShutdown>(
             OnParentThresholdShutdown);
+        _immuneQuery = GetEntityQuery<TemperatureImmunityComponent>(); // DeltaV
     }
 
     public override void Update(float frameTime)
@@ -115,20 +124,41 @@ public sealed class TemperatureSystem : EntitySystem
         ShouldUpdateDamage.Clear();
     }
 
+    // Goob start
+    private void OnCheckLowTemperatureImmunity(Entity<SpecialLowTempImmunityComponent> ent, ref TemperatureImmunityEvent args)
+    {
+        if (args.CurrentTemperature < args.IdealTemperature)
+            args.CurrentTemperature = args.IdealTemperature;
+    }
+
+    private void OnCheckHighTemperatureImmunity(Entity<SpecialHighTempImmunityComponent> ent, ref TemperatureImmunityEvent args)
+    {
+        if (args.CurrentTemperature > args.IdealTemperature)
+            args.CurrentTemperature = args.IdealTemperature;
+    }
+    // Goob end
+
     public void ForceChangeTemperature(EntityUid uid, float temp, TemperatureComponent? temperature = null)
     {
         if (!Resolve(uid, ref temperature))
             return;
 
         float lastTemp = temperature.CurrentTemperature;
-        float delta = temperature.CurrentTemperature - temp;
         temperature.CurrentTemperature = temp;
+
+        // Goob start
+        var tempEv = new TemperatureImmunityEvent(temperature.CurrentTemperature);
+        RaiseLocalEvent(uid, tempEv);
+        temperature.CurrentTemperature = tempEv.CurrentTemperature;
+
+        float delta = temperature.CurrentTemperature - temp;
+        // Goob end
+
         RaiseLocalEvent(uid, new OnTemperatureChangeEvent(temperature.CurrentTemperature, lastTemp, delta),
             true);
     }
 
-    public void ChangeHeat(EntityUid uid, float heatAmount, bool ignoreHeatResistance = false,
-        TemperatureComponent? temperature = null)
+    public override void ChangeHeat(EntityUid uid, float heatAmount, bool ignoreHeatResistance = false, TemperatureComponent? temperature = null)
     {
         if (!Resolve(uid, ref temperature, false))
             return;
@@ -163,16 +193,6 @@ public sealed class TemperatureSystem : EntitySystem
         ChangeHeat(uid, heat * temperature.AtmosTemperatureTransferEfficiency, temperature: temperature);
     }
 
-    public float GetHeatCapacity(EntityUid uid, TemperatureComponent? comp = null, PhysicsComponent? physics = null)
-    {
-        if (!Resolve(uid, ref comp) || !Resolve(uid, ref physics, false) || physics.FixturesMass <= 0)
-        {
-            return Atmospherics.MinimumHeatCapacity;
-        }
-
-        return comp.SpecificHeat * physics.FixturesMass;
-    }
-
     private void OnInit(EntityUid uid, InternalTemperatureComponent comp, MapInitEvent args)
     {
         if (!TryComp<TemperatureComponent>(uid, out var temp))
@@ -192,7 +212,7 @@ public sealed class TemperatureSystem : EntitySystem
         float threshold;
         float idealTemp;
 
-        if (!TryComp<TemperatureComponent>(uid, out var temperature))
+        if (!TryComp<TemperatureComponent>(uid, out var temperature) || _immuneQuery.HasComp(uid)) // DeltaV - hide alerts if immune
         {
             _alerts.ClearAlertCategory(uid, TemperatureAlertCategory);
             return;
@@ -245,6 +265,10 @@ public sealed class TemperatureSystem : EntitySystem
 
     private void EnqueueDamage(Entity<TemperatureComponent> temperature, ref OnTemperatureChangeEvent args)
     {
+        // Begin DeltaV Additions - cosmic cult temperature immunity
+        if (_immuneQuery.HasComp(temperature))
+            return;
+        // End DeltaV Additions
         ShouldUpdateDamage.Add(temperature);
     }
 
@@ -296,17 +320,16 @@ public sealed class TemperatureSystem : EntitySystem
         }
     }
 
-    private void OnTemperatureChangeAttempt(EntityUid uid, TemperatureProtectionComponent component,
-        InventoryRelayedEvent<ModifyChangedTemperatureEvent> args)
+    private void OnTemperatureChangeAttempt(EntityUid uid, TemperatureProtectionComponent component, ModifyChangedTemperatureEvent args)
     {
-        var coefficient = args.Args.TemperatureDelta < 0
+        var coefficient = args.TemperatureDelta < 0
             ? component.CoolingCoefficient
             : component.HeatingCoefficient;
 
         var ev = new GetTemperatureProtectionEvent(coefficient);
         RaiseLocalEvent(uid, ref ev);
 
-        args.Args.TemperatureDelta *= ev.Coefficient;
+        args.TemperatureDelta *= ev.Coefficient;
     }
 
     private void ChangeTemperatureOnCollide(Entity<ChangeTemperatureOnCollideComponent> ent, ref ProjectileHitEvent args)

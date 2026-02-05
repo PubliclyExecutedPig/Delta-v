@@ -26,7 +26,22 @@
   id: JobCargoAssistant
 
 - type: playTimeTracker
-  id: JobAdminAssistant
+  id: JobSurgeon
 
 - type: playTimeTracker
-  id: JobSurgeon
+  id: RoleLaika
+
+- type: playTimeTracker
+  id: RoleShiva
+
+- type: playTimeTracker
+  id: RoleSilvia
+
+- type: playTimeTracker
+  id: RoleIfrit
+
+- type: playTimeTracker
+  id: RoleCarpy
+
+- type: playTimeTracker
+  id: RolePunPun

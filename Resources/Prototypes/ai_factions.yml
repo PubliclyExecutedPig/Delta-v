@@ -1,13 +1,35 @@
+
 - type: npcFaction
   id: Dragon
   hostile:
-    - NanoTrasen
-    - Syndicate
-    - Xeno
-    - PetsNT
-    - Zombie
-    - Revolutionary
-    - AllHostile
+  - NanoTrasen
+  - Syndicate
+  - Xeno
+  - PetsNT
+  - Zombie
+  - Revolutionary
+  - AllHostile
+  - Wizard
+  - AnimalFriend
+  - Xenoborg
+
+- type: npcFaction
+  id: SalvageMob
+  friendly:
+  - SimpleHostile
+  hostile:
+  - Syndicate
+  - Xeno
+  - Zombie
+  - Revolutionary
+  - NanoTrasen
+  - Wizard
+  - Dragon
+  - AllHostile
+  - Xenoborg
+  - PetsNT
+  - AnimalFriend
+  - Mouse
 
 - type: npcFaction
   id: NanoTrasen
@@ -19,27 +41,36 @@
   - Revolutionary
   - Dragon
   - AllHostile
+  - Wizard
+  - Xenoborg
 
 - type: npcFaction
   id: Mouse
   hostile:
-    - PetsNT
-    - AllHostile
+  - PetsNT
+  - AllHostile
+  - Wizard
 
 - type: npcFaction
   id: Passive
 
 - type: npcFaction
   id: PetsNT
+  friendly:
+  - NanoTrasen
   hostile:
   - Mouse
   - SimpleHostile
   - Zombie
   - Xeno
   - AllHostile
+  - Dragon
 
 - type: npcFaction
   id: SimpleHostile
+  friendly:
+  - AnimalFriend # DeltaV - Add AnimalFriend faction
+  - SalvageMob
   hostile:
   - NanoTrasen
   - Syndicate
@@ -47,7 +78,11 @@
   - PetsNT
   - Zombie
   - Revolutionary
+  - Dragon
+  - Xeno
   - AllHostile
+  - Wizard
+  - Xenoborg
 
 - type: npcFaction
   id: SimpleNeutral
@@ -62,8 +97,10 @@
   - Zombie
   - Dragon
   - AllHostile
-  friendly: # DeltaV Nukie hostage ops
-  - Hostage
+  - Wizard
+  friendly:
+  - Hostage # DeltaV - Nukie hostage ops
+  - Xenoborg
 
 - type: npcFaction
   id: Xeno
@@ -75,6 +112,9 @@
   - Zombie
   - Revolutionary
   - AllHostile
+  - Wizard
+  - Dragon
+  - Xenoborg
 
 - type: npcFaction
   id: Zombie
@@ -87,6 +127,9 @@
   - PetsNT
   - Revolutionary
   - AllHostile
+  - Wizard
+  - Dragon
+  - Xenoborg
 
 - type: npcFaction
   id: Revolutionary
@@ -96,6 +139,8 @@
   - SimpleHostile
   - Dragon
   - AllHostile
+  - Wizard
+  - Xenoborg
 
 - type: npcFaction
   id: AllHostile
@@ -111,3 +156,38 @@
   - Xeno
   - Zombie
   - Revolutionary
+  - Wizard
+  - Xenoborg
+
+- type: npcFaction
+  id: Wizard
+  hostile:
+  - NanoTrasen
+  - Dragon
+  - Mouse
+  - Passive
+  - PetsNT
+  - SimpleHostile
+  - SimpleNeutral
+  - Syndicate
+  - Xeno
+  - Zombie
+  - Revolutionary
+  - AllHostile
+  - Xenoborg
+
+- type: npcFaction
+  id: Xenoborg
+  hostile:
+  # they have brains
+  - NanoTrasen
+  - Syndicate
+  - Zombie
+  - Revolutionary
+  - Wizard
+
+  - Xeno # rivalry
+
+  # cause they are hostile to them
+  - SimpleHostile
+  - AllHostile

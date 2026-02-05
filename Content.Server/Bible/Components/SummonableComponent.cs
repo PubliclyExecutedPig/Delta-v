@@ -1,3 +1,4 @@
+using Robust.Shared.Audio;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
@@ -10,6 +11,17 @@ namespace Content.Server.Bible.Components
     public sealed partial class SummonableComponent : Component
     {
         /// <summary>
+        /// Default sound to play when entity is summoned.
+        /// </summary>
+        private static readonly ProtoId<SoundCollectionPrototype> DefaultSummonSound = new("Summon");
+
+        /// <summary>
+        /// Sound to play when entity is summoned.
+        /// </summary>
+        [DataField]
+        public SoundSpecifier SummonSound = new SoundCollectionSpecifier(DefaultSummonSound, AudioParams.Default.WithVolume(-4f));
+
+        /// <summary>
         /// Used for a special item only the Chaplain can summon. Usually a mob, but supports regular items too.
         /// </summary>
         [DataField("specialItem", customTypeSerializer: typeof(PrototypeIdSerializer<EntityPrototype>))]
@@ -18,6 +30,15 @@ namespace Content.Server.Bible.Components
 
         [DataField("requiresBibleUser")]
         public bool RequiresBibleUser = true;
+
+        // DeltaV - Begin Anomalite Limited Respawns
+        [DataField]
+        public int? Lives = null;
+        [ViewVariables(VVAccess.ReadWrite)]
+        public int Deaths = 0;
+
+        public bool CanSummon => !AlreadySummoned && (Lives is null || Deaths < Lives) && SpecialItemPrototype != null;
+        // DeltaV - End Anomalite Limited Respawns
 
         /// <summary>
         /// The specific creature this summoned, if the SpecialItemPrototype has a mobstate.

@@ -20,6 +20,37 @@
   - type: Clothing
     sprite: _DV/Clothing/Uniforms/Jumpskirt/courier.rsi
 
+- type: entity
+  parent: ClothingUniformJumpsuitAtmosCasual
+  id: ClothingUniformJumpskirtAtmosCasual
+  name: atmospheric technician's casual jumpskirt
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Uniforms/Jumpskirt/atmos_casual.rsi
+  - type: Clothing
+    sprite: _DV/Clothing/Uniforms/Jumpskirt/atmos_casual.rsi
+
+- type: entity
+  parent: ClothingUniformOveralls
+  id: ClothingUniformJumpskirtOveralls
+  name: overalls jumpskirt
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Uniforms/Jumpskirt/overalls.rsi
+  - type: Clothing
+    sprite: _DV/Clothing/Uniforms/Jumpskirt/overalls.rsi
+
+- type: entity
+  parent: ClothingUniformSkirtBase
+  id: ClothingUniformJumpskirtWaitstaffFormal
+  name: waitstaff skirt
+  description: A sharp vest with a pencil skirt made for serving tables and looking professional.
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Uniforms/Jumpskirt/waitingskirt.rsi
+  - type: Clothing
+    sprite: _DV/Clothing/Uniforms/Jumpskirt/waitingskirt.rsi
+
 # Formal uniforms
 
 - type: entity
@@ -329,9 +360,9 @@
 
 - type: entity
   parent: ClothingUniformBase
-  id: ClothingUniformJumpskirtAdminAssistant
-  name: administrative assistant's jumpskirt
-  description: A suit worn by the Administrative Assistant. Smells of burnt coffee.
+  id: ClothingUniformJumpskirtSecretary
+  name: secretary's jumpskirt
+  description: A suit worn by secretary personnel. Smells of burnt coffee.
   components:
   - type: Sprite
     sprite: _DV/Clothing/Uniforms/Jumpskirt/admin_assistant.rsi
@@ -360,3 +391,40 @@
     sprite: _DV/Clothing/Uniforms/Jumpskirt/cargotechromper.rsi
   - type: Clothing
     sprite: _DV/Clothing/Uniforms/Jumpskirt/cargotechromper.rsi
+
+# Robo-neuroticist uniform
+
+- type: entity
+  parent: ClothingUniformBase
+  id: ClothingUniformJumpskirtRoboNeuroticist
+  name: robo-neuroticist's jumpskirt
+  description: A jumpskirt fit with dozens of cybernetic gadgets.
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Uniforms/Jumpskirt/roboneuroticistpurple.rsi
+  - type: Clothing
+    sprite: _DV/Clothing/Uniforms/Jumpskirt/roboneuroticistpurple.rsi
+
+# Seasonal
+
+- type: entity
+  parent: ClothingUniformBase
+  id: ClothingUniformJumpskirtFestiveDressRed
+  name: festive red dress
+  description: A festive red dress with white fur trim, perfect for holiday parties.
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Uniforms/Jumpskirt/festive_red_dress.rsi
+  - type: Clothing
+    sprite: _DV/Clothing/Uniforms/Jumpskirt/festive_red_dress.rsi
+
+- type: entity
+  parent: ClothingUniformBase
+  id: ClothingUniformJumpskirtElf
+  name: elf jumpskirt
+  description: An elf costume complete with a green skirt and red-and-white striped stockings.
+  components:
+  - type: Sprite
+    sprite: _DV/Clothing/Uniforms/Jumpskirt/elf.rsi
+  - type: Clothing
+    sprite: _DV/Clothing/Uniforms/Jumpskirt/elf.rsi

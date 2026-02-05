@@ -1,10 +1,12 @@
 - type: entity
-  parent: Ash
+  parent: BaseItem
   id: EctoplasmRevenant
   suffix: DO NOT MAP
-  name: ectoplasm
+  name: revenant ectoplasm
   description: Slimey, vaporous residue of an ancient spirit.
   components:
+    - type: Item
+      size: Tiny
     - type: Sprite
       sprite: _DV/Mobs/Ghosts/revenant.rsi
       state: ectoplasm
@@ -22,7 +24,12 @@
             - ReagentId: Necrosol
               Quantity: 10
             - ReagentId: Ectoplasm
-              Quantity: 30        
+              Quantity: 30
+    - type: Extractable
+      grindableSolutionName: food
     - type: GuideHelp
       guides:
       - MinorAntagonists
+    - type: StatusEffects
+      allowed:
+      - Stasis

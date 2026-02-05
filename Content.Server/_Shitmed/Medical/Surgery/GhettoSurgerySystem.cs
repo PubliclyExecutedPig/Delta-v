@@ -1,4 +1,4 @@
-using Content.Server.Kitchen.Components;
+using Content.Shared.Kitchen.Components;
 using Content.Shared._Shitmed.Medical.Surgery.Tools;
 using Robust.Shared.Audio;
 
@@ -53,10 +53,13 @@ public sealed partial class GhettoSurgerySystem : EntitySystem
 
     private void OnSharpShutdown(Entity<SharpComponent> ent, ref ComponentShutdown args)
     {
-        if (ent.Comp.HadScalpel)
+        if (!ent.Comp.HadSurgeryTool)
+            RemComp<SurgeryToolComponent>(ent);
+
+        if (!ent.Comp.HadScalpel)
             RemComp<ScalpelComponent>(ent);
 
-        if (ent.Comp.HadBoneSaw)
+        if (!ent.Comp.HadBoneSaw)
             RemComp<BoneSawComponent>(ent);
     }
 }

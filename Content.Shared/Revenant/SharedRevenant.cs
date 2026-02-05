@@ -42,7 +42,7 @@ public sealed class HarvestDoAfterCancelled : EntityEventArgs
 {
 }
 
-public sealed partial class RevenantShopActionEvent : InstantActionEvent
+public sealed partial class RevenantHauntActionEvent : InstantActionEvent // Imp
 {
 }
 
@@ -62,6 +62,34 @@ public sealed partial class RevenantMalfunctionActionEvent : InstantActionEvent
 {
 }
 
+public sealed partial class RevenantBloodWritingEvent : InstantActionEvent // Begin Imp Changes
+{
+}
+
+public sealed partial class RevenantAnimateEvent : EntityTargetActionEvent
+{
+}
+
+[Serializable, NetSerializable]
+public sealed partial class RevenantHauntWitnessEvent : EntityEventArgs
+{
+    public HashSet<NetEntity> Witnesses = new();
+
+    public RevenantHauntWitnessEvent(HashSet<NetEntity> witnesses)
+    {
+        Witnesses = witnesses;
+    }
+
+    public RevenantHauntWitnessEvent() : this(new())
+    {
+    }
+}
+
+[Serializable, NetSerializable]
+public sealed partial class ExorciseRevenantDoAfterEvent : SimpleDoAfterEvent
+{
+} // End Imp Changes
+
 
 [NetSerializable, Serializable]
 public enum RevenantVisuals : byte
@@ -72,7 +100,7 @@ public enum RevenantVisuals : byte
 }
 
 [NetSerializable, Serializable]
-public enum RevenantVisualLayers : byte
+public enum RevenantVisualLayers : byte // DeltaV - kept for impstation rev compatibility
 {
     Digit1,
     Digit2,

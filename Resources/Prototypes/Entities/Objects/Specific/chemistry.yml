@@ -7,14 +7,14 @@
     tags:
     - GlassBeaker
   - type: Sprite
-    sprite: Objects/Specific/Chemistry/beaker.rsi
+    sprite: _DV/Objects/Specific/Chemistry/beaker.rsi # DeltaV - resprited some med items
     layers:
       - state: beaker
       - state: beaker1
         map: ["enum.SolutionContainerLayers.Fill"]
         visible: false
   - type: Item
-    sprite: Objects/Specific/Chemistry/beaker.rsi
+    sprite: _DV/Objects/Specific/Chemistry/beaker.rsi # DeltaV - resprited some med items
   - type: MeleeWeapon
     soundNoDamage:
       path: "/Audio/Effects/Fluids/splat.ogg"
@@ -35,6 +35,7 @@
     solution: beaker
   - type: ExaminableSolution
     solution: beaker
+    exactVolume: true
   - type: DrawableSolution
     solution: beaker
   - type: InjectableSolution
@@ -47,8 +48,11 @@
     interfaces:
       enum.TransferAmountUiKey.Key:
         type: TransferAmountBoundUserInterface
-  - type: Drink
+  - type: Edible
+    edible: Drink
     solution: beaker
+    destroyOnEmpty: false
+    utensil: None
   - type: Appearance
   - type: SolutionContainerVisuals
     maxFillLevels: 6
@@ -103,14 +107,14 @@
     tags:
     - GlassBeaker
   - type: Sprite
-    sprite: Objects/Specific/Chemistry/beaker.rsi
+    sprite: _DV/Objects/Specific/Chemistry/beaker.rsi # DeltaV - resprited some med items
     layers:
       - state: beaker
       - state: beaker1
         map: ["enum.SolutionContainerLayers.Fill"]
         visible: false
   - type: Item
-    sprite: Objects/Specific/Chemistry/beaker.rsi
+    sprite: _DV/Objects/Specific/Chemistry/beaker.rsi # DeltaV - resprited some med items
   - type: MeleeWeapon
     soundNoDamage:
       path: "/Audio/Effects/Fluids/splat.ogg"
@@ -131,6 +135,7 @@
     solution: beaker
   - type: ExaminableSolution
     solution: beaker
+    exactVolume: true
   - type: DrawableSolution
     solution: beaker
   - type: InjectableSolution
@@ -143,8 +148,11 @@
     interfaces:
       enum.TransferAmountUiKey.Key:
         type: TransferAmountBoundUserInterface
-  - type: Drink
+  - type: Edible
+    edible: Drink
     solution: beaker
+    destroyOnEmpty: false
+    utensil: Spoon
   - type: Appearance
   - type: SolutionContainerVisuals
     maxFillLevels: 6
@@ -199,7 +207,7 @@
   - type: Spillable
     solution: beaker
   - type: Sprite
-    sprite: Objects/Specific/Chemistry/beaker_large.rsi
+    sprite: _DV/Objects/Specific/Chemistry/beaker_large.rsi # DeltaV - Resprited some medical items
     layers:
       - state: beakerlarge
       - state: beakerlarge1
@@ -207,7 +215,7 @@
         visible: false
   - type: Item
     size: Normal
-    sprite: Objects/Specific/Chemistry/beaker_large.rsi
+    sprite: _DV/Objects/Specific/Chemistry/beaker_large.rsi # DeltaV - Resprited some medical items
   - type: SolutionContainerManager
     solutions:
       beaker:
@@ -253,7 +261,7 @@
   - type: Spillable
     solution: beaker
   - type: Sprite
-    sprite: Objects/Specific/Chemistry/beaker_bluespace.rsi
+    sprite: _DV/Objects/Specific/Chemistry/beaker_bluespace.rsi # DeltaV - Resprited some medical items
     layers:
       - state: beakerbluespace
   - type: SolutionContainerVisuals
@@ -275,7 +283,7 @@
   id: Dropper
   components:
   - type: Sprite
-    sprite: Objects/Specific/Chemistry/dropper.rsi
+    sprite: _DV/Objects/Specific/Chemistry/dropper.rsi # DeltaV - Resprited some medical items
     layers:
       - state: dropper
       - state: dropper1
@@ -286,15 +294,15 @@
       injector:
         maxVol: 5
   - type: Injector
-    injectOnly: false
     ignoreMobs: true
     ignoreClosed: false
-    minTransferAmount: 1
-    maxTransferAmount: 5
-    transferAmount: 1
-    toggleState: 1 # draw
+    activeModeProtoId: DropperDrawMode
+    allowedModes:
+    - DropperDrawMode
+    - DropperInjectMode
   - type: ExaminableSolution
     solution: dropper
+    exactVolume: true
   - type: UserInterface
     interfaces:
       enum.TransferAmountUiKey.Key:
@@ -302,7 +310,7 @@
   - type: Spillable
     solution: injector
   - type: Item
-    sprite: Objects/Specific/Chemistry/dropper.rsi
+    sprite: _DV/Objects/Specific/Chemistry/dropper.rsi # DeltaV - Resprited some medical items
     size: Tiny
   - type: Appearance
   - type: SolutionContainerVisuals
@@ -316,15 +324,16 @@
   - type: Tag
     tags:
     - Dropper
+  - type: PhysicalComposition
 
 - type: entity
-  name: borgdropper
   parent: Dropper
-  description: Used to transfer small amounts of chemical solution between containers. Extended for use by medical borgs.
   id: BorgDropper
+  name: hydraulic pipette
+  description: State-of-the-art hydraulic dropper built for cyborgs. It features a higher capacity than hand-powered droppers, able to hold 15 units of liquid.
   components:
   - type: Sprite
-    sprite: Objects/Specific/Chemistry/dropper.rsi
+    sprite: _DV/Objects/Specific/Chemistry/dropper.rsi # DeltaV - Resprited some medical items
     layers:
       - state: borgdropper
       - state: dropper1
@@ -333,9 +342,9 @@
   - type: SolutionContainerManager
     solutions:
       injector:
-        maxVol: 10
+        maxVol: 15
   - type: Item
-    sprite: Objects/Specific/Chemistry/dropper.rsi
+    sprite: _DV/Objects/Specific/Chemistry/dropper.rsi # DeltaV - Resprited some medical items
 
 - type: entity
   name: syringe
@@ -363,9 +372,13 @@
       injector:
         maxVol: 15
   - type: Injector
-    injectOnly: false
+    activeModeProtoId: SyringeDrawMode
+    allowedModes:
+    - SyringeDrawMode
+    - SyringeInjectMode
   - type: ExaminableSolution
     solution: injector
+    exactVolume: true
   - type: Spillable
     solution: injector
   - type: TrashOnSolutionEmpty
@@ -384,9 +397,6 @@
   parent: BaseSyringe
   id: Syringe
   components:
-  - type: Injector
-    transferAmount: 15
-    toggleState: Draw
   - type: Tag
     tags:
     - Syringe
@@ -405,26 +415,26 @@
         map: ["enum.SolutionContainerLayers.Fill"]
         visible: false
       - state: syringeproj
+  - type: SolutionContainerManager
+    solutions:
+      injector:
+        maxVol: 5
   - type: SolutionContainerVisuals
     maxFillLevels: 3
     fillBaseName: minisyringe
     inHandsMaxFillLevels: 3
     inHandsFillBaseName: -fill-
   - type: EmbeddableProjectile
-    offset: "-0.1,0"
+    offset: "0,-0.1"
     minimumSpeed: 3
     removalTime: 0.25
     embedOnThrow: false
-  - type: SolutionContainerManager # DeltaV - Nerfs the max volume to 5 (was 15)
-    solutions:
-      injector:
-        maxVol: 5 
   - type: SolutionInjectWhileEmbedded
     transferAmount: 1
     solution: injector
     updateInterval: 2
   - type: SolutionInjectOnEmbed
-    transferAmount: 2
+    transferAmount: 2 # DeltaV - was 1
     solution: injector
   - type: Fixtures
     fixtures:
@@ -457,11 +467,12 @@
     - SyringeGunAmmo
 
 - type: entity
+  abstract: true
   parent: BaseSyringe
   id: PrefilledSyringe
   components:
   - type: Injector
-    toggleState: Inject
+    activeModeProtoId: SyringeInjectMode
 
 - type: entity
   id: SyringeBluespace
@@ -484,8 +495,10 @@
       injector:
         maxVol: 100
   - type: Injector
-    delay: 2.5
-    injectOnly: false
+    activeModeProtoId: BluespaceSyringeDrawMode
+    allowedModes:
+    - BluespaceSyringeInjectMode
+    - BluespaceSyringeDrawMode
   - type: SolutionContainerVisuals
     maxFillLevels: 2
     fillBaseName: syringe
@@ -520,15 +533,14 @@
         maxVol: 10
         canReact: false
   - type: Injector
-    injectOnly: false
-    minTransferAmount: 5
-    maxTransferAmount: 10
-    transferAmount: 10
+    activeModeProtoId: CryostasisSyringeDrawMode
+    allowedModes:
+    - CryostasisSyringeInjectMode
+    - CryostasisSyringeDrawMode
   - type: Tag
     tags:
     - Syringe
     - Trash
-
 
 - type: entity
   name: pill
@@ -537,18 +549,17 @@
   description: It's not a suppository.
   components:
   - type: Sprite
-    sprite: Objects/Specific/Chemistry/pills.rsi
+    sprite: _DV/Objects/Specific/Chemistry/pills.rsi # DeltaV - Resprited some medical items
     state: pill
   - type: Item
     size: Tiny
-    sprite: Objects/Specific/Chemistry/pills.rsi
+    sprite: _DV/Objects/Specific/Chemistry/pills.rsi # DeltaV - Resprited some medical items
   - type: Pill
-  - type: Food
+  - type: Edible
     delay: 0.6
     forceFeedDelay: 2
     transferAmount: null
-    eatMessage: food-swallow
-    useSound: /Audio/Items/pill.ogg
+    edible: Pill
   - type: BadFood
   - type: FlavorProfile
     ignoreReagents: []
@@ -588,9 +599,9 @@
   components:
   - type: Item
     size: Tiny
-    sprite: Objects/Specific/Chemistry/pills_canister.rsi
+    sprite: _DV/Objects/Specific/Chemistry/pills_canister.rsi # DeltaV - Resprited some medical items
   - type: Sprite
-    sprite: Objects/Specific/Chemistry/pills_canister.rsi
+    sprite: _DV/Objects/Specific/Chemistry/pills_canister.rsi # DeltaV - Resprited some medical items
     state: pill_canister
   - type: Tag
     tags:
@@ -603,7 +614,7 @@
     areaInsertRadius: 1
     storageInsertSound: /Audio/Effects/pill_insert.ogg
     storageRemoveSound: /Audio/Effects/pill_remove.ogg
-    whitelist: 
+    whitelist:
       tags:
       - Pill
   - type: Dumpable

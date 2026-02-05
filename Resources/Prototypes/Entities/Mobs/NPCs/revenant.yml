@@ -6,20 +6,25 @@
   name: revenant
   description: A spooky ghostie.
   components:
+  - type: Emag
+    emagType: All
   - type: Input
     context: "ghost"
   - type: Spectral
   - type: MovementSpeedModifier
-    baseWalkSpeed: 6
-    baseSprintSpeed: 6
+    baseWalkSpeed: 5 # DeltaV - was 6, slight nerf
+    baseSprintSpeed: 5 # DeltaV - was 6, slight nerf
   - type: Sprite
     sprite: _DV/Mobs/Ghosts/revenant.rsi # DeltaV - Custom revenant sprite
     layers:
     - state: active
   - type: StatusEffects
     allowed:
-    - Stun
     - Corporeal
+    - EssenceRegen # Imp
+  - type: Hands # Imp
+    showInHands: false
+    disableExplosionRecursion: true
   - type: Damageable
     damageContainer: ManifestedSpirit
     damageModifierSet: Spirit # DeltaV: Keep revenant extreme weakness to heat and bible
@@ -44,7 +49,9 @@
       settings: default
   - type: GhostTakeoverAvailable
   - type: Revenant
-    spawnOnDeathPrototype: EctoplasmRevenant # DeltaV - different prototype that contains more ectoplasm reagent for normality crystals
+    exorcismRequiresBibleUser: true # Imp - Escape hatch, change to false if revenant becomes too OP
+    grindingRequiresSalt: true # Imp - Escape hatch, change to false if revenant becomes too OP
+    # spawnOnDeathPrototype: EctoplasmRevenant # DeltaV - different prototype that contains more ectoplasm reagent for normality crystals, commented out
     malfunctionWhitelist:
       components:
       # emag lockers open
@@ -66,6 +73,10 @@
         type: StoreBoundUserInterface
   - type: Visibility
     layer: 2 #ghost vis layer
+  - type: ActionGrant
+    actions:
+    - ActionRevenantShop
+    - ActionRevenantHaunt # Imp - Haunt ability
   - type: Store
     categories:
     - RevenantAbilities
@@ -73,13 +84,16 @@
     - StolenEssence
   - type: RandomMetadata
     nameSegments:
-    - The
-    - RevenantType
-    - of
-    - RevenantAdjective
-    - RevenantTheme
+    - NamesRevenantType
+    - NamesRevenantAdjective
+    - NamesRevenantTheme
+    nameFormat: name-format-revenant
   - type: Speech
     speechVerb: Ghost
   - type: Reactive
     groups:
       Acidic: [Touch]
+  - type: Tag
+    tags:
+    - SlowImmune
+    - KnockdownImmune

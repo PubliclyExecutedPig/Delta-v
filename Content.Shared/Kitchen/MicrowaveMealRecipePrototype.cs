@@ -19,6 +19,9 @@ namespace Content.Shared.Kitchen
         [DataField("name")]
         private string _name = string.Empty;
 
+        [DataField]
+        public string Group = "Other";
+
         [DataField("reagents", customTypeSerializer:typeof(PrototypeIdDictionarySerializer<FixedPoint2, ReagentPrototype>))]
         private Dictionary<string, FixedPoint2> _ingsReagents = new();
 
@@ -42,6 +45,12 @@ namespace Content.Shared.Kitchen
         /// </summary>
         [DataField]
         public bool SecretRecipe = false;
+
+        /// <summary>
+        /// DeltaV: Changes the guidebook formatting to "Fry for"
+        /// </summary>
+        [DataField]
+        public bool DeepFried;
 
         /// <summary>
         ///    Count the number of ingredients in a recipe for sorting the recipe list.

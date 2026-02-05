@@ -1,5 +1,5 @@
 - type: entity
-  parent: [WeaponLaserCarbinePractice, BaseGunWieldable, BaseRestrictedContraband]
+  parent: [WeaponLaserCarbinePractice, BaseGunWieldable, BaseSecurityContraband]
   id: EmergencyWeaponLaserCarbine
   name: emergency laser rifle
   description: An emergency laser rifle, for use when getting timely clearance isn't an option. Hand this in to security once the coast is clear.
@@ -13,8 +13,8 @@
       map: ["enum.GunVisualLayers.MagUnshaded"]
       shader: unshaded
   - type: StaticPrice
-    price: 420
-  - type: HitscanBatteryAmmoProvider
+    price: 300
+  - type: BatteryAmmoProvider
     proto: EmergencyRedLaser
     fireCost: 50
   - type: Item
