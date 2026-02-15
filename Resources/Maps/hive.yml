@@ -1,10 +1,10 @@
 meta:
   format: 7
   category: Map
-  engineVersion: 267.3.0
+  engineVersion: 268.0.0
   forkId: ""
   forkVersion: ""
-  time: 01/07/2026 06:18:55
+  time: 02/11/2026 02:09:31
   entityCount: 31838
 maps:
 - 8
@@ -94669,6 +94669,8 @@ entities:
       pos: -53.5,24.5
       parent: 1
     - type: GasMixer
+      inletTwoConcentration: 0.21
+      inletOneConcentration: 0.79
       targetPressure: 4500
     - type: AtmosPipeColor
       color: '#0335FCFF'
@@ -204057,7 +204059,7 @@ entities:
       lastSignals:
         DoorStatus: True
     - type: Door
-      secondsUntilStateChange: -230347.12
+      secondsUntilStateChange: -230446.06
       state: Opening
   - uid: 5096
     components:
@@ -204074,7 +204076,7 @@ entities:
       lastSignals:
         DoorStatus: True
     - type: Door
-      secondsUntilStateChange: -230347.12
+      secondsUntilStateChange: -230446.06
       state: Opening
   - uid: 5498
     components:
@@ -204090,7 +204092,7 @@ entities:
       lastSignals:
         DoorStatus: True
     - type: Door
-      secondsUntilStateChange: -230070.75
+      secondsUntilStateChange: -230169.69
       state: Opening
   - uid: 8696
     components:
@@ -204123,7 +204125,7 @@ entities:
       lastSignals:
         DoorStatus: True
     - type: Door
-      secondsUntilStateChange: -230068.86
+      secondsUntilStateChange: -230167.8
       state: Opening
   - uid: 18835
     components:
@@ -204135,7 +204137,7 @@ entities:
       lastSignals:
         DoorStatus: True
     - type: Door
-      secondsUntilStateChange: -230065.86
+      secondsUntilStateChange: -230164.8
       state: Opening
   - uid: 23917
     components:
